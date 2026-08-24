@@ -1,0 +1,20 @@
+/* v18.4 — Google image recovery popup */
+.missing-image-google-dialog{max-width:min(720px,94vw)}
+.missing-image-google-body{display:flex;flex-direction:column;gap:13px}
+.missing-image-google-product{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#f8fbfd}
+.missing-image-google-product span{font-size:calc(8px * var(--ui-font-scale));font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#7a8c99}
+.missing-image-google-product strong{font-size:calc(13px * var(--ui-font-scale));color:#173e5d}
+.missing-image-google-query-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:end}
+.missing-image-google-query-row .field{margin:0}
+.missing-image-google-query-row .btn{min-height:38px;white-space:nowrap}
+.missing-image-google-help{padding:9px 11px;border-radius:9px;background:#f4f7f9;color:#657b8a;font-size:calc(8.5px * var(--ui-font-scale));line-height:1.45}
+.missing-image-import-drop{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;min-height:152px;padding:12px;border:1.5px dashed #b9ccd8;border-radius:13px;background:#fbfdff;cursor:pointer;transition:.14s ease}
+.missing-image-import-drop:hover,.missing-image-import-drop.dragover,.missing-image-import-drop:focus{outline:0;border-color:#6ca7cd;background:#f3f9fd}
+.missing-image-import-preview{min-height:126px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;border-radius:10px;background:#fff;color:#82929e;font-size:calc(8.5px * var(--ui-font-scale));overflow:hidden;text-align:center;padding:8px}
+.missing-image-import-preview img{max-width:100%;max-height:220px;object-fit:contain;display:block}
+.missing-image-import-preview small{color:#8998a3;font-size:calc(7px * var(--ui-font-scale));line-height:1.35}
+.missing-image-url-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.missing-image-url-row input{width:100%;height:38px;border:1px solid var(--line-strong);border-radius:9px;padding:0 10px;font:inherit;color:#28465c;background:#fff;outline:0}
+.missing-image-url-row input:focus{border-color:#79a9ca;box-shadow:0 0 0 3px rgba(23,105,170,.08)}
+.missing-image-save-note{font-size:calc(8px * var(--ui-font-scale));color:#687d8c}
+@media(max-width:640px){.missing-image-google-query-row,.missing-image-import-drop,.missing-image-url-row{grid-template-columns:1fr}.missing-image-google-query-row .btn,.missing-image-import-drop .btn,.missing-image-url-row .btn{width:100%}}

@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GROHE products builder — v18.4.6</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="card-pdf-actions.css" />
+  <link rel="stylesheet" href="missing-image-google.css" />
+  <link rel="stylesheet" href="data-sheet-viewer.css" />
+</head>
+<body>
+
+  <main class="app-shell">
+    <header class="app-header app-header-main">
+      <div class="app-brand" aria-label="GROHE products builder">
+        <div class="app-logo grohe-wordmark" aria-hidden="true" title="GROHE products builder">
+          <svg viewBox="0 0 64 52" role="img" aria-label="GROHE"><text x="32" y="21" text-anchor="middle">GROHE</text><path d="M10 30c5 0 5 4 10 4s5-4 10-4 5 4 10 4 5-4 10-4 5 4 10 4"/><path d="M10 37c5 0 5 4 10 4s5-4 10-4 5 4 10 4 5-4 10-4 5 4 10 4"/></svg>
+        </div>
+        <div class="brand-copy"><strong>GROHE products builder</strong></div>
+      </div>
+      <div class="header-project">
+        <div class="project-name-line"><strong id="projectName">No project open</strong><span id="projectSavedBadge" class="status-chip muted">Not saved</span></div>
+        <div class="project-meta" id="projectMeta">Create a project to start selecting products.</div>
+      </div>
+      <div class="header-actions">
+        <div id="validationBox" class="validation-compact hidden-validation" hidden></div>
+        <button class="btn project-quick-btn" id="btnSaveProjectQuick" title="Save current project">Save</button>
+        <button class="btn project-quick-btn" id="btnProjectsQuick" title="Open saved projects">Projects</button>
+        <button class="icon-action history-btn" id="btnUndo" title="Undo last project action" aria-label="Undo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7H5v-4M5.6 6.2A8 8 0 1 1 4 14"/></svg></button>
+        <button class="icon-action history-btn" id="btnRedo" title="Redo last project action" aria-label="Redo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 7h4v-4m-.6 3.2A8 8 0 1 0 20 14"/></svg></button>
+        <button class="btn primary" id="btnExport">Export</button>
+        <details class="action-menu settings-menu" id="projectMenu">
+          <summary class="icon-menu-btn settings-icon" title="Settings & project tools" aria-label="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h3M11 12h9M4 18h8M16 18h4"/><circle cx="16" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="14" cy="18" r="2"/></svg></summary>
+          <div class="action-menu-popover header-settings-popover">
+            <div class="menu-section-title">Project</div>
+            <button class="menu-action" id="btnTemplates">Templates & Bundles</button>
+            <div class="legacy-hidden-actions" hidden>
+              <button class="menu-action selector-focus-btn" id="btnFocusSelector">Product Selector</button>
+              <button class="menu-action" id="btnNewProject">New Project</button><button class="menu-action" id="btnEditProject">Project Details</button><button class="menu-action" id="btnProjects">Projects</button><button class="menu-action" id="btnPasteSkus">Paste SKUs</button><button class="menu-action" id="btnReviewIssues">Review Issues</button><button class="menu-action" id="btnCopySelection">Copy Selected SKUs</button>
+            </div>
+            <div class="menu-divider"></div><div class="menu-section-title">Appearance & layout</div>
+            <div class="thumbnail-setting"><div><span>Image size</span><strong id="thumbnailSizeValue">136 px</strong></div><input type="range" id="thumbnailSize" min="72" max="180" step="4" value="136" aria-label="Product thumbnail size" /></div>
+            <div class="font-setting"><div><span>Text size</span><strong id="fontSizeValue">115%</strong></div><input type="range" id="fontSize" min="90" max="140" step="5" value="115" aria-label="Interface text size" /></div>
+            <label class="columns-setting"><span>Product columns</span><select id="productColumns" aria-label="Product columns"><option value="2">2 columns</option><option value="3">3 columns</option><option value="4" selected>4 columns</option><option value="5">5 columns</option><option value="6">6 columns</option></select></label>
+            <div class="thumbnail-setting"><div><span>Filter sidebar width</span><strong id="catalogSidebarWidthValue">260 px</strong></div><input type="range" id="catalogSidebarWidth" min="230" max="520" step="10" value="260" aria-label="Filter sidebar width" /></div>
+            <div class="thumbnail-setting"><div><span>Selection panel width</span><strong id="selectionPanelWidthValue">400 px</strong></div><input type="range" id="selectionPanelWidth" min="320" max="760" step="10" value="400" aria-label="Selection panel width" /></div>
+            <label class="columns-setting"><span>Density</span><select id="uiDensity" aria-label="Interface density"><option value="compact">Compact</option><option value="comfortable" selected>Comfortable</option><option value="spacious">Spacious</option></select></label>
+            <button class="menu-action" id="btnResetLayout">Reset layout</button>
+            <div class="menu-divider"></div><div class="menu-section-title">System</div>
+            <button class="menu-action" id="btnDatabase">Manage Products</button>
+            <div class="image-setting-status"><span>Product images</span><strong id="settingsImageCount">Not loaded</strong></div>
+            <button class="menu-action" id="btnLoadImagesMenu">Load / Change Image Folder</button>
+            <div class="data-sheet-setting-status"><span>Data sheets</span><strong id="settingsPdfStatus">Checking…</strong><small id="settingsPdfPath"></small></div>
+            <button class="menu-action" id="btnDataSheetsFolder">Load / Change Data Sheets Folder</button>
+            <button class="menu-action" id="btnRescanDataSheets">Re-scan Data Sheets</button>
+            <div class="hidden-items-setting-status"><span>Hidden from search</span><strong id="settingsHiddenCount">0 items</strong></div>
+            <button class="menu-action" id="btnHiddenItems">Hidden Items…</button>
+            <div hidden><button class="menu-action" id="btnMissingImagesOnly" type="button" aria-pressed="false">Show products without images</button><button class="menu-action" id="btnAddSection">Add Break</button></div>
+          </div>
+        </details>
+      </div>
+    </header>
+
+
+    <section class="workspace-grid">
+      <aside class="selector-panel card compact-selector selector-panel-main">
+        <div id="catalogueTotal" hidden></div>
+        <div class="selector-shell">
+          <aside class="filter-sidebar" aria-label="Product filters">
+            <div class="filter-sidebar-header"><div><strong>Filters</strong></div><button type="button" class="text-btn" id="btnClearFilters">Reset all</button></div>
+            
+            <section class="facet-menu primary-static-facet" data-facet-key="category"><div class="facet-static-head"><strong>Category</strong></div><div class="facet-popover"><label class="facet-search"><span>⌕</span><input type="search" data-facet-search="category" placeholder="Search categories..." /></label><div class="facet-options" data-facet-options="category"></div></div></section>
+            <section class="facet-menu primary-static-facet" data-facet-key="family"><div class="facet-static-head"><strong>Family</strong></div><div class="facet-popover"><label class="facet-search"><span>⌕</span><input type="search" data-facet-search="family" placeholder="Search families..." /></label><div class="facet-options" data-facet-options="family"></div></div></section>
+            <section class="facet-menu finish-static" data-facet-key="finish"><div class="finish-static-head"><strong>Finish</strong><button type="button" class="text-btn" id="btnClearFinish">Clear</button></div><div class="facet-options finish-grid" data-facet-options="finish"></div></section>
+            <details class="more-filter-menu sidebar-more-filters" id="moreFilters">
+              <summary class="advanced-filter-summary" title="More filters"><span>More filters</span><b id="advancedFilterCount" hidden>0</b><i>⌄</i></summary>
+              <div class="more-filter-panel">
+                <div class="advanced-filter-intro">Additional product attributes</div>
+                <div class="more-filter-grid facet-grid advanced-filter-grid">
+                  <details class="facet-menu secondary-facet" data-facet-key="size"><summary><span>Size</span><strong data-facet-value="size">All sizes</strong><i>⌄</i></summary><div class="facet-popover"><label class="facet-search"><span>⌕</span><input type="search" data-facet-search="size" placeholder="Search sizes..." /></label><div class="facet-options" data-facet-options="size"></div></div></details>
+                  <details class="facet-menu secondary-facet" data-facet-key="mounting"><summary><span>Installation</span><strong data-facet-value="mounting">All types</strong><i>⌄</i></summary><div class="facet-popover"><label class="facet-search"><span>⌕</span><input type="search" data-facet-search="mounting" placeholder="Search installation..." /></label><div class="facet-options" data-facet-options="mounting"></div></div></details>
+                  <details class="facet-menu secondary-facet" data-facet-key="function"><summary><span>Function</span><strong data-facet-value="function">All controls</strong><i>⌄</i></summary><div class="facet-popover"><label class="facet-search"><span>⌕</span><input type="search" data-facet-search="function" placeholder="Search controls..." /></label><div class="facet-options" data-facet-options="function"></div></div></details>
+                  <details class="facet-menu secondary-facet" data-facet-key="outlets"><summary><span>Ways</span><strong data-facet-value="outlets">All outlets</strong><i>⌄</i></summary><div class="facet-popover"><label class="facet-search"><span>⌕</span><input type="search" data-facet-search="outlets" placeholder="Search outlets..." /></label><div class="facet-options" data-facet-options="outlets"></div></div></details>
+                  <details class="facet-menu secondary-facet" data-facet-key="area"><summary><span>Area</span><strong data-facet-value="area">All areas</strong><i>⌄</i></summary><div class="facet-popover"><label class="facet-search"><span>⌕</span><input type="search" data-facet-search="area" placeholder="Search areas..." /></label><div class="facet-options" data-facet-options="area"></div></div></details>
+                  <details class="facet-menu secondary-facet" data-facet-key="shape"><summary><span>Shape</span><strong data-facet-value="shape">All shapes</strong><i>⌄</i></summary><div class="facet-popover"><label class="facet-search"><span>⌕</span><input type="search" data-facet-search="shape" placeholder="Search shapes..." /></label><div class="facet-options" data-facet-options="shape"></div></div></details>
+                  <details class="facet-menu secondary-facet" data-facet-key="status"><summary><span>Status</span><strong data-facet-value="status">All statuses</strong><i>⌄</i></summary><div class="facet-popover"><label class="facet-search"><span>⌕</span><input type="search" data-facet-search="status" placeholder="Search statuses..." /></label><div class="facet-options" data-facet-options="status"></div></div></details>
+                  <label class="field view-filter-field"><span>View</span><select id="filterView"><option value="">All products</option><option value="favorites">Favorites</option><option value="recent">Recently used</option></select></label>
+                </div>
+              </div>
+            </details>
+            <div class="sidebar-toggle-stack"><button type="button" class="catalogue-check-toggle ceramics-check-toggle" id="btnCeramicsToggle" role="checkbox" aria-checked="false" title="Include ceramics in catalogue, search and filters"><i class="catalogue-check-mark" aria-hidden="true">✓</i><span>Ceramics</span></button><button type="button" class="catalogue-check-toggle pruned-check-toggle" id="btnPrunedToggle" role="checkbox" aria-checked="false" title="Include pruned products in catalogue, search and filters"><i class="catalogue-check-mark" aria-hidden="true">✓</i><span>Pruned</span></button></div><div class="missing-image-tools"><button type="button" class="missing-images-only-btn" id="btnMissingImagesSidebar" aria-pressed="false">Products without images</button></div>
+          </aside>
+          <div class="catalog-sidebar-resizer" id="catalogSidebarResizer" title="Drag to resize filters · double-click to reset"><span></span></div>
+          <section class="catalogue-panel"><div class="selector-main-top"><div class="catalogue-heading"><strong class="catalogue-title">Product catalogue</strong><span class="result-summary" id="resultSummary">0 products</span></div><div class="catalogue-search-slot"><label class="search-compact catalogue-search-compact" aria-label="Search all products"><span class="search-icon">⌕</span><input id="smartSearch" list="searchSuggestions" placeholder="Search by SKU, product name or keyword…" autocomplete="off" /><button type="button" class="search-clear" id="btnClearSearch" title="Clear search">×</button></label><datalist id="searchSuggestions"></datalist></div><div class="catalogue-top-actions"><span class="catalogue-hint">Double-click a product to add</span><details class="action-menu catalogue-view-menu" id="catalogueViewMenu"><summary class="btn small">View</summary><div class="action-menu-popover right-align catalogue-view-popover"><div class="menu-section-title">Catalogue layout</div><label class="catalogue-view-select"><span>Cards per row</span><select id="catalogueColumns"><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option></select></label><label class="catalogue-view-select"><span>Card design</span><select id="catalogueCardLayout"><option value="top" selected>Image top · text bottom</option><option value="side">Image left · text right</option></select></label><div class="menu-divider"></div><div class="menu-section-title">Catalogue items display</div><label class="view-check"><input type="checkbox" id="catalogueShowImages" checked /> <span>Product images</span></label><label class="view-check"><input type="checkbox" id="catalogueShowFamily" checked /> <span>Family</span></label><label class="view-check"><input type="checkbox" id="catalogueShowDescriptions" checked /> <span>Descriptions</span></label><label class="view-check"><input type="checkbox" id="catalogueShowFinish" checked /> <span>Finish</span></label><label class="view-check"><input type="checkbox" id="catalogueShowBadges" checked /> <span>SPA / status badges</span></label><label class="view-check"><input type="checkbox" id="catalogueCompactCards" /> <span>Compact cards</span></label><button type="button" class="menu-action" id="btnResetCatalogueView">Reset view</button></div></details></div></div><div class="active-filter-row"><div class="active-filter-chips" id="activeFilterChips"></div></div><div class="results-list" id="resultsList"></div></section>
+        </div>
+      </aside>
+
+      <div class="workspace-resizer" id="workspaceResizer" title="Drag to resize · double-click to reset"><span></span></div>
+
+      <section class="sequence-panel card">
+        <div class="panel-heading sequence-heading">
+          <div class="sequence-title-wrap selection-tabs-wrap">
+            <div class="selection-tabs-strip" id="selectionTabs" role="tablist" aria-label="Selections"></div>
+          </div>
+          <div class="sequence-actions">
+<details class="action-menu sequence-view-menu" id="sequenceViewMenu">
+              <summary class="btn small" title="Customize selected items view">View</summary>
+              <div class="action-menu-popover right-align sequence-view-popover">
+                <div class="menu-section-title">Selected items display</div>
+                <label class="view-check"><input type="checkbox" id="viewShowImages" checked /> <span>Product images</span></label>
+                <label class="view-check"><input type="checkbox" id="viewShowDescriptions" checked /> <span>Descriptions</span></label>
+                <label class="view-check"><input type="checkbox" id="viewShowBadges" checked /> <span>SPA / status badges</span></label>
+                <label class="view-check"><input type="checkbox" id="viewShowParentRef" checked /> <span>Concealed parent reference</span></label>
+                <label class="view-check"><input type="checkbox" id="viewShowConcealed" checked /> <span>Concealed items</span></label>
+                <label class="view-check"><input type="checkbox" id="viewCompactRows" checked /> <span>Compact rows</span></label>
+                <div class="selection-image-setting">
+                  <div><span>Right image size</span><strong id="selectionImageSizeValue">92 px</strong></div>
+                  <input type="range" id="selectionImageSize" min="64" max="160" step="4" value="92" />
+                </div>
+                <button type="button" class="menu-action" id="btnResetSelectionView">Reset view</button>
+              </div>
+            </details>
+            <button class="btn small" id="btnAddSection2">+ Break</button>
+            <details class="action-menu sequence-menu">
+              <summary class="icon-menu-btn selection-tools-icon" title="Selection tools" aria-label="Selection tools"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg></summary>
+              <div class="action-menu-popover right-align">
+                <button class="menu-action" id="btnPasteSkus2">Paste SKUs</button>
+                <button class="menu-action" id="btnSaveBundle">Save Current Section as Bundle</button>
+                <button class="menu-action" id="btnDuplicateSection">Duplicate Current Section</button>
+                <button class="menu-action" id="btnCopySelection2">Copy Selected SKUs</button>
+                <button class="menu-action" id="btnReviewIssues2">Review Issues</button>
+                <div class="menu-divider"></div>
+                <button class="menu-action danger-text" id="btnClearSequence">Clear selection</button>
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="sequence-empty" id="sequenceEmpty">
+          <div class="empty-icon">＋</div>
+          <strong>Your selection is empty</strong>
+          <p>Add products from the catalogue to build your specification.</p>
+        </div>
+        <div class="sequence-list" id="sequenceList"></div>
+      </section>
+    </section>
+  </main>
+
+  <div id="itemMenuPortal" class="item-menu-portal" aria-live="polite"></div>
+
+  <input type="file" id="csvFileInput" hidden accept=".csv,.txt,.tsv" />
+  <input type="file" id="fallbackImageFolder" webkitdirectory multiple hidden accept="image/*" />
+
+  <dialog id="projectDialog" class="modal medium">
+    <form method="dialog" id="projectForm">
+      <div class="modal-header"><div><div class="eyebrow">PROJECT</div><h3 id="projectDialogTitle">New Project</h3></div><button value="cancel" class="icon-btn">✕</button></div>
+      <div class="modal-body form-grid">
+        <label class="field full"><span>Project name *</span><input id="projectInputName" required /></label>
+        <label class="field"><span>Customer</span><input id="projectInputCustomer" /></label>
+        <label class="field"><span>Date</span><input id="projectInputDate" type="date" /></label>
+        <label class="field full"><span>Default project finish</span><select id="projectInputFinish"></select></label>
+      </div>
+      <div class="modal-footer"><button value="cancel" class="btn">Cancel</button><button type="button" class="btn primary" id="projectFormSave">Save Project</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="projectFinishDialog" class="modal medium">
+    <div class="modal-header"><div><div class="eyebrow">PROJECT MANAGEMENT</div><h3>Change Selection Finish</h3></div><button class="icon-btn" data-close="projectFinishDialog">✕</button></div>
+    <div class="modal-body">
+      <div class="project-finish-target" id="projectFinishTarget"></div>
+      <label class="field full"><span>New project finish</span><select id="projectFinishSelect"></select></label>
+      <label class="project-finish-option"><input type="checkbox" id="projectFinishConvertItems" checked /> <span>Change matching selected products to this finish</span></label>
+      <div class="project-finish-preview" id="projectFinishPreview"></div>
+    </div>
+    <div class="modal-footer"><button class="btn" data-close="projectFinishDialog">Cancel</button><button class="btn primary" id="btnApplyProjectFinish">Apply finish</button></div>
+  </dialog>
+
+  <dialog id="roomFinishDialog" class="modal medium">
+    <div class="modal-header"><div><div class="eyebrow">BREAK</div><h3>Break Finish</h3></div><button class="icon-btn" data-close="roomFinishDialog">✕</button></div>
+    <div class="modal-body">
+      <div class="project-finish-target" id="roomFinishTarget"></div>
+      <label class="field full"><span>Target break finish</span><select id="roomFinishSelect"></select></label>
+      <div class="project-finish-preview" id="roomFinishPreview"></div>
+      <p class="modal-help">Only exact finish variants are changed automatically. Items without a matching finish stay unchanged for review. Concealed technical bodies are ignored.</p>
+    </div>
+    <div class="modal-footer"><button class="btn" data-close="roomFinishDialog">Cancel</button><button class="btn primary" id="btnApplyRoomFinish">Apply break finish</button></div>
+  </dialog>
+
+  <dialog id="projectsDialog" class="modal large">
+    <div class="modal-header"><div><div class="eyebrow">SAVED LOCALLY</div><h3>Project Management</h3></div><button class="icon-btn" data-close="projectsDialog">✕</button></div>
+    <div class="modal-body">
+      <div class="projects-toolbar"><input id="projectSearch" placeholder="Search project / customer..." /><label><input type="checkbox" id="showArchivedProjects" /> Show archived</label></div>
+      <div id="projectsList" class="projects-list"></div>
+    </div>
+    <div class="modal-footer"><button class="btn" id="btnBackupProjects">Backup projects</button><button class="btn primary" id="projectsNew">New Project</button></div>
+  </dialog>
+
+  <dialog id="databaseDialog" class="modal backend-modal">
+    <div class="modal-header backend-header">
+      <div><div class="eyebrow">LOCAL MASTER DATA</div><h3>Database Manager</h3><small>Local product master</small></div>
+      <button class="icon-btn" data-close="databaseDialog">✕</button>
+    </div>
+    <div class="database-layout-v7" id="databaseLayout">
+      <nav class="db-tabs" id="dbTabs">
+        <button type="button" class="db-tab active" data-db-tab="products">Products</button>
+        <button type="button" class="db-tab" data-db-tab="rules">Compatibility</button>
+        <button type="button" class="db-tab" data-db-tab="quality">Data Quality</button>
+        <button type="button" class="db-tab" data-db-tab="import">Import</button>
+        <button type="button" class="db-tab" data-db-tab="backups">Backups</button>
+      </nav>
+      <section class="db-toolbar-v7">
+        <label class="db-search-v7"><span>⌕</span><input id="dbSearch" placeholder="Search SKU, name, family, category or keyword..." autocomplete="off" /></label>
+        <select id="dbFilterCategory" aria-label="Database category"><option value="">All categories</option></select>
+        <select id="dbFilterStatus" aria-label="Database status"><option value="">All status</option></select>
+        <button class="btn primary" id="btnDbNew">+ New SKU</button>
+        <button class="btn" id="btnDbBulk">Bulk Edit</button>
+        <button class="btn" id="btnMissingImages">Missing images</button>
+        <details class="action-menu db-actions-menu">
+          <summary class="icon-menu-btn compact-dots">•••</summary>
+          <div class="action-menu-popover right-align">
+            <button class="menu-action" id="btnDbImportToggle">Import / update</button>
+            <button class="menu-action" id="btnExportDbCsv">Export CSV</button>
+            <button class="menu-action" id="btnExportDbJson">Export JSON</button>
+            <div class="menu-divider"></div>
+            <button class="menu-action danger-text" id="btnResetCustomDb">Reset all local database changes</button>
+          </div>
+        </details>
+      </section>
+
+      <section class="db-metrics-v7">
+        <span><strong id="dbTotal">0</strong> SKUs</span>
+        <span><strong id="dbCustom">0</strong> edited / added</span>
+        <span><strong id="dbDeleted">0</strong> removed locally</span>
+        <span><strong id="dbRules">0</strong> auto-component rules</span>
+      </section>
+
+      <section class="db-main-v7">
+        <div class="db-browser-v7">
+          <div class="db-list-head"><span>Products</span><small id="dbResultCount">0 results</small></div>
+          <div class="db-product-list" id="dbProductList"></div>
+        </div>
+        <aside class="db-editor-v7">
+          <div class="db-editor-head">
+            <div><div class="eyebrow">PRODUCT RECORD</div><h4 id="dbEditorTitle">Select a SKU to edit</h4></div>
+            <span id="dbImageBadge" class="db-image-badge muted">Image unknown</span>
+          </div>
+          <div class="db-editor-scroll">
+            <div class="form-grid compact db-form-v7">
+              <label class="field"><span>SKU *</span><input id="dbSku" /></label>
+              <label class="field"><span>Status</span><select id="dbStatus"><option>Active</option><option>New</option><option>Discontinued / Pruned</option><option>Replacement Available</option><option>Professional</option><option>Special / Project</option><option>Unknown</option><option>Legacy Catalogue</option></select></label>
+              <label class="field full"><span>Product name / description *</span><input id="dbDescription" /></label>
+              <label class="field"><span>Category</span><input id="dbCategory" list="dbCategorySuggestions" /></label>
+              <label class="field"><span>Family / collection</span><input id="dbFamily" /></label>
+              <label class="field"><span>Finish</span><input id="dbFinish" /></label>
+              <label class="field"><span>Area</span><input id="dbArea" /></label>
+              <label class="field"><span>Size</span><input id="dbSize" /></label>
+              <label class="field"><span>Installation</span><input id="dbMounting" /></label>
+              <label class="field"><span>Function / control</span><input id="dbFunction" /></label>
+              <label class="field"><span>Outlets / ways</span><input id="dbOutlets" /></label>
+              <label class="field"><span>Shape</span><input id="dbShape" /></label>
+              <label class="field full"><span>Search keywords</span><input id="dbKeywords" placeholder="e.g. 2 way concealed, wall mixer, hotel, rain shower" /></label>
+              <label class="field"><span>Compatible concealed body option(s)</span><input id="dbRequired" placeholder="23571000; 32635000" /></label>
+              <label class="field"><span>Replacement SKU</span><input id="dbReplacement" /></label>
+              <label class="field"><span>Source</span><input id="dbSource" /></label>
+              <label class="field"><span>Source date / version</span><input id="dbSourceVersion" /></label>
+            </div>
+            <datalist id="dbCategorySuggestions"></datalist>
+            <div class="db-source-line" id="dbSourceLine">Starter catalogue record</div>
+            <div class="db-editor-actions">
+              <button class="btn primary" id="btnSaveSku">Save changes</button>
+              <button class="btn" id="btnRevertSku">Revert to starter</button>
+              <button class="btn danger-text" id="btnDeleteSku">Remove SKU</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <details class="db-import-panel" id="dbImportPanel">
+        <summary>Import / bulk update from Excel or CSV</summary>
+        <div class="db-import-body">
+          <p>Paste rows from Excel or load a CSV. Existing SKUs are updated; new SKUs are added. Supported columns include SKU, Description, Family, Category, Finish, Area, Size, Mounting, Function, Outlets, Shape, Keywords, Required Body, Status and Replacement.</p>
+          <textarea id="importText" rows="7" placeholder="SKU	Description	Family	Category	Finish	Area	Size	Mounting	Function	Outlets	Shape	Keywords	Required Body	Status	Replacement	Source	Source Version"></textarea>
+          <div class="inline-actions"><button class="btn" id="btnLoadCsv">Load CSV</button><button class="btn" id="btnPreviewImport">Preview Changes</button><button class="btn primary" id="btnImportRows">Apply Import</button><small id="importStatus"></small></div>
+          <label class="toggle-line import-conflict-option"><input type="checkbox" id="preserveLocalConflicts" checked /> Preserve my existing local edits when an import conflicts</label><div id="importPreview" class="import-preview"></div>
+        </div>
+      </details>
+
+      <section id="dbRulesPanel" class="db-extra-panel">
+        <div class="db-extra-head"><div><h4>Compatibility Rules</h4><p>Rules are applied after catalogue relationships. Local rules are remembered and can override or extend the master data.</p></div><button class="btn primary" id="btnNewRule">+ New Rule</button></div>
+        <div class="rules-layout"><div id="compatRulesList" class="compat-rules-list"></div><div class="rule-editor">
+          <input type="hidden" id="ruleId" />
+          <label class="field"><span>Rule name</span><input id="ruleName" /></label>
+          <label class="field"><span>Match type</span><select id="ruleMatchType"><option value="exact">Exact SKU</option><option value="prefix">SKU prefix</option><option value="keywords">Keywords / phrase</option></select></label>
+          <label class="field"><span>Match value</span><input id="ruleMatchValue" placeholder="e.g. 29338 or rainshower smartactive 310" /></label>
+          <label class="field"><span>Compatible body SKU(s)</span><input id="ruleBodies" placeholder="23571000; 32635000" /></label>
+          <label class="field"><span>Category restriction (optional)</span><input id="ruleCategory" /></label>
+          <label class="field"><span>Notes / source</span><input id="ruleNotes" /></label>
+          <label class="toggle-line"><input type="checkbox" id="ruleEnabled" checked /> Enabled</label>
+          <div class="inline-actions"><button class="btn primary" id="btnSaveRule">Save Rule</button><button class="btn danger-text" id="btnDeleteRule">Delete</button></div>
+        </div></div>
+      </section>
+      <section id="dbQualityPanel" class="db-extra-panel">
+        <div class="db-extra-head"><div><h4>Data Quality</h4><p>Find records that need cleanup before they cause quotation mistakes.</p></div><button class="btn" id="btnRefreshQuality">Refresh Audit</button></div>
+        <div id="qualityMetrics" class="quality-metrics"></div>
+        <div class="quality-filter-row"><select id="qualityIssueType"><option value="">All issues</option><option value="missingImage">Missing image</option><option value="missingCategory">Missing category</option><option value="categoryReview">Category review</option><option value="missingFamily">Missing family</option><option value="missingFinish">Missing finish</option><option value="missingCompatibility">Missing compatibility</option><option value="legacy">Legacy / discontinued</option><option value="brokenReference">Broken SKU reference</option></select><button class="btn" id="btnExportQuality">Export Issues CSV</button></div>
+        <div id="qualityIssueList" class="quality-issue-list"></div>
+      </section>
+      <section id="dbBackupsPanel" class="db-extra-panel">
+        <div class="db-extra-head"><div><h4>Database Backups</h4><p>Automatic snapshots are created before bulk imports and destructive operations.</p></div><button class="btn primary" id="btnCreateBackup">Create Backup Now</button></div>
+        <div id="backupList" class="backup-list"></div>
+        <details class="change-history-panel" open><summary>Recent database changes</summary><div id="dbChangeHistory"></div></details><details class="change-history-panel"><summary>Runtime diagnostics</summary><div id="runtimeErrorLog"></div></details>
+      </section>
+    </div>
+  </dialog>
+
+  <dialog id="missingImagesDialog" class="modal large">
+    <div class="modal-header"><div><div class="eyebrow">IMAGE AUDIT</div><h3>Missing product images</h3></div><button class="icon-btn" data-close="missingImagesDialog">✕</button></div>
+    <div class="modal-body missing-images-body">
+      <div id="missingImagesNotice" class="info-note">Checking G:\My Drive\Images automatically...</div>
+      <div class="missing-images-toolbar">
+        <label class="db-search-v7"><span>⌕</span><input id="missingImageSearch" placeholder="Filter missing SKU list..." autocomplete="off" /></label>
+        <button class="btn" id="btnCopyMissingSkus">Copy SKUs</button>
+        <button class="btn primary" id="btnOpenImageRecoveryAudit">Search & Download Images</button>
+        <button class="btn primary" id="btnLoadImagesAudit">Load image folder</button>
+        <button class="btn" id="btnRefreshImages">Refresh images</button>
+        <button class="btn" id="btnExportMissingImages">Export CSV</button>
+      </div>
+      <div class="missing-image-count" id="missingImageCount"></div>
+      <div class="missing-image-list" id="missingImageList"></div>
+    </div>
+  </dialog>
+
+
+  <dialog id="pasteSkusDialog" class="modal medium">
+    <div class="modal-header"><div><div class="eyebrow">QUICK ADD</div><h3>Paste SKUs</h3></div><button class="icon-btn" data-close="pasteSkusDialog">✕</button></div>
+    <div class="modal-body"><p class="modal-help">Paste one SKU per line, or paste directly from Excel. The first SKU-looking value on each row will be used.</p><textarea id="pasteSkusText" rows="12" placeholder="24064DL1
+35604000
+... "></textarea><div id="pasteSkusPreview" class="paste-preview"></div></div>
+    <div class="modal-footer"><button class="btn" id="btnPreviewPaste">Preview</button><button class="btn primary" id="btnApplyPaste">Add to Project</button></div>
+  </dialog>
+
+  <dialog id="templatesDialog" class="modal large">
+    <div class="modal-header"><div><div class="eyebrow">REUSE</div><h3>Templates & Bundles</h3></div><button class="icon-btn" data-close="templatesDialog">✕</button></div>
+    <div class="modal-body"><div class="template-toolbar"><input id="templateSearch" placeholder="Search templates..." /><button class="btn" id="btnSaveProjectTemplate">Save Current Project as Template</button></div><div id="templateList" class="template-list"></div></div>
+  </dialog>
+
+  <dialog id="reviewDialog" class="modal large">
+    <div class="modal-header"><div><div class="eyebrow">PROJECT AUDIT</div><h3>Review Issues</h3></div><button class="icon-btn" data-close="reviewDialog">✕</button></div>
+    <div class="modal-body"><div id="reviewSummary" class="review-summary"></div><div id="reviewIssueList" class="review-issue-list"></div></div>
+  </dialog>
+
+  <dialog id="bulkEditDialog" class="modal medium">
+    <div class="modal-header"><div><div class="eyebrow">DATABASE</div><h3>Bulk Edit Products</h3></div><button class="icon-btn" data-close="bulkEditDialog">✕</button></div>
+    <div class="modal-body"><p class="modal-help">Apply a field change to every product currently matching the Database Manager search and filters.</p><div id="bulkEditCount" class="info-note"></div><div class="form-grid"><label class="field"><span>Field</span><select id="bulkEditField"><option value="category">Category</option><option value="family">Family</option><option value="finish">Finish</option><option value="status">Status</option><option value="keywords">Keywords</option></select></label><label class="field"><span>New value</span><input id="bulkEditValue" /></label></div></div>
+    <div class="modal-footer"><button class="btn primary" id="btnApplyBulkEdit">Apply to Matching Products</button></div>
+  </dialog>
+
+  <dialog id="hiddenItemsDialog" class="modal medium">
+    <div class="modal-header"><div><div class="eyebrow">SEARCH VISIBILITY</div><h3>Hidden Items</h3></div><button class="icon-btn" data-close="hiddenItemsDialog">✕</button></div>
+    <div class="modal-body hidden-items-body">
+      <p class="modal-help">Hide products from the catalogue search without deleting them from the database. Paste one SKU or a bulk list separated by spaces, commas, or new lines.</p>
+      <label class="field full"><span>SKU(s) to hide</span><textarea id="hiddenItemsInput" placeholder="Example:
+23462001
+24092001
+29086000"></textarea></label>
+      <div class="inline-actions hidden-items-actions"><button type="button" class="btn primary" id="btnHideItemsApply">Hide from search</button><button type="button" class="btn" id="btnUnhideAll">Unhide all</button></div>
+      <div class="hidden-items-summary" id="hiddenItemsSummary">0 hidden items</div>
+      <div class="hidden-items-list" id="hiddenItemsList"></div>
+    </div>
+  </dialog>
+
+  <dialog id="manageProjectDialog" class="modal large">
+    <div class="modal-header"><div><div class="eyebrow">PROJECT HUB</div><h3>Manage Project</h3></div><button class="icon-btn" data-close="manageProjectDialog">✕</button></div>
+    <div class="modal-body manage-project-body">
+      <section class="manage-project-current">
+        <div class="manage-project-card">
+          <div class="manage-project-main">
+            <div class="manage-project-label">Current project</div>
+            <strong id="manageProjectName">No project open</strong>
+            <small id="manageProjectMeta">Create or open a project to start working.</small>
+          </div>
+          <div class="manage-project-actions">
+            <button class="btn primary" id="btnManageProjectNew">New project</button>
+            <button class="btn" id="btnManageProjectEdit">Edit details</button>
+            <button class="btn" id="btnManageProjectSave">Save</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="manage-project-saved">
+        <div class="projects-toolbar"><input id="projectSearchHub" placeholder="Search project / customer..." /><label><input type="checkbox" id="showArchivedProjectsHub" /> Show archived</label></div>
+        <div id="projectsListHub" class="projects-list compact"></div>
+      </section>
+    </div>
+  </dialog>
+
+
+  <dialog id="missingImageGoogleDialog" class="modal medium missing-image-google-dialog">
+    <div class="modal-header"><div><div class="eyebrow">MISSING PRODUCT IMAGE</div><h3>Find & save product image</h3></div><button class="icon-btn" data-close="missingImageGoogleDialog">✕</button></div>
+    <div class="modal-body missing-image-google-body">
+      <div class="missing-image-google-product"><span>SKU</span><strong id="missingImageImportSku">—</strong></div>
+      <div class="missing-image-google-query-row"><label class="field full"><span>Google Images search</span><input id="missingImageGoogleQuery" readonly /></label><button type="button" class="btn primary" id="btnOpenGoogleImages">Open Google Images</button></div>
+      <div class="missing-image-google-help">Search opens as <strong>SKU + GROHE</strong>. Verify the picture matches the exact SKU, then copy the image, copy its image address, or download it and return here.</div>
+      <div class="missing-image-import-drop" id="missingImageImportDrop" tabindex="0">
+        <div id="missingImageImportPreview" class="missing-image-import-preview"><span>Paste image (Ctrl+V), drop it here, or choose a file</span></div>
+        <button type="button" class="btn" id="btnChooseMissingImage">Choose image</button>
+        <input type="file" id="missingImageImportFile" accept="image/*" hidden />
+      </div>
+      <div class="missing-image-url-row"><input id="missingImageImportUrl" placeholder="Or paste image URL…" /><button type="button" class="btn" id="btnLoadMissingImageUrl">Load URL</button></div>
+      <div class="missing-image-save-note" id="missingImageImportFileName">Will save as SKU.jpg</div>
+    </div>
+    <div class="modal-footer"><button class="btn" data-close="missingImageGoogleDialog">Cancel</button><button class="btn primary" id="btnSaveMissingImageJpeg" disabled>Save JPEG</button></div>
+  </dialog>
+
+  <dialog id="specDialog" class="modal large">
+    <div class="modal-header"><div><div class="eyebrow">PRODUCT SPECIFICATION</div><h3 id="specDialogTitle">Product details</h3></div><button class="icon-btn" data-close="specDialog">✕</button></div>
+    <div class="modal-body spec-dialog-body">
+      <div class="spec-hero">
+        <div id="specDialogImage" class="spec-hero-image"></div>
+        <div class="spec-hero-copy">
+          <strong id="specDialogSku">—</strong>
+          <div id="specDialogFamily" class="spec-family"></div>
+          <div id="specDialogDescription" class="spec-description"></div>
+        </div>
+      </div>
+      <div class="spec-catalogue-block"><div class="spec-section-title">Catalogue text</div><pre id="specCatalogueText" class="spec-catalogue-text"></pre></div>
+      <div class="spec-source-line" id="specSourceLine"></div>
+      <div id="specDialogGrid" class="spec-grid"></div>
+    </div>
+  </dialog>
+  <dialog id="exportDialog" class="modal medium">
+    <div class="modal-header"><div><div class="eyebrow">EXCEL</div><h3>Export Selection</h3></div><button class="icon-btn" data-close="exportDialog">✕</button></div>
+    <div class="modal-body"><div class="export-presets"><label><input type="radio" name="exportPreset" value="standard" checked /> Standard selection</label><label><input type="radio" name="exportPreset" value="sku" /> SKU + Qty only</label><label><input type="radio" name="exportPreset" value="purchasing" /> Purchasing</label><label><input type="radio" name="exportPreset" value="technical" /> Technical submission</label></div><label class="field"><span>Section</span><select id="exportSection"><option value="">All sections</option></select></label></div>
+    <div class="modal-footer"><button class="btn primary" id="btnRunExport">Export</button></div>
+  </dialog>
+
+  <dialog id="replaceDialog" class="modal medium">
+    <div class="modal-header"><div><div class="eyebrow">EDIT ITEM</div><h3>Edit code / SKU</h3></div><button class="icon-btn" data-close="replaceDialog">✕</button></div>
+    <div class="modal-body">
+      <label class="field full"><span>Search by SKU / description</span><input id="replaceSearch" /></label>
+      <div id="replaceResults" class="replace-results"></div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <div id="imageHoverPreview" class="image-hover-preview" aria-hidden="true"></div>
+
+  <script src="core.js"></script>
+  <script src="storage.js"></script>
+  <script src="seed-products.js"></script>
+  <script src="app.js"></script>
+  <script src="data-sheet-viewer.js"></script>
+</body>
+</html>
