@@ -1,0 +1,64 @@
+name: Deploy GROHE SpecBuilder v18.4.6
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout v18.4.6
+        uses: actions/checkout@v4
+
+      - name: Prepare static site
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp index.html dist/
+          cp favicon.svg dist/
+          cp styles.css dist/
+          cp card-pdf-actions.css dist/
+          cp missing-image-google.css dist/
+          cp data-sheet-viewer.css dist/
+          cp core.js dist/
+          cp storage.js dist/
+          cp seed-products.js dist/
+          cp app.js dist/
+          cp data-sheet-viewer.js dist/
+          touch dist/.nojekyll
+          test -s dist/index.html
+          test -s dist/app.js
+          test -s dist/seed-products.js
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
