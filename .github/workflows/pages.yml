@@ -39,9 +39,10 @@ jobs:
           cp seed-products.js dist/
           cp app.js dist/
 
-          # Integrated release changes: export choice + PDF Kit handoff.
+          # Integrated release changes: export choice + native PDF Kit handoff.
           patch -d dist -p0 < .deploy/v18_5/index.html.patch
           patch -d dist -p0 < .deploy/v18_5/app.js.patch
+          patch -d dist -p0 < .deploy/v18_5/pdfkit-exact-handoff.patch
           cat .deploy/v18_5/styles.add.css >> dist/styles.css
 
           # Browser-capable Data Sheet locator based on PDF Kit Pro 12.11.1 matching.
@@ -50,8 +51,28 @@ jobs:
           # Optional account route. Guests remain fully usable; signed-in users get cloud projects/profile.
           cp -R multi-user dist/multi-user
 
-          # PDF Kit Pro is a second application screen/page.
-          cp -R pdf-kit-pro dist/pdf-kit-pro
+          # PDF Kit Pro v12.11.1. If the original desktop ZIP (or extracted folder)
+          # is present in the repository, publish every original file unchanged.
+          EXACT_PDFKIT_HASH="4a21e06271c1683c7716c344932f8be1e573e4e2c8579c8780ade88a95d192ec"
+          if [ -f "PDF_Kit_Pro_Desktop_v12.11.1.zip" ]; then
+            rm -rf dist/pdf-kit-pro dist/.pdfkit-extract
+            mkdir -p dist/pdf-kit-pro dist/.pdfkit-extract
+            unzip -q "PDF_Kit_Pro_Desktop_v12.11.1.zip" -d dist/.pdfkit-extract
+            cp -R dist/.pdfkit-extract/PDF_Kit_Pro_Desktop/. dist/pdf-kit-pro/
+            rm -rf dist/.pdfkit-extract
+          elif [ -f "PDF_Kit_Pro_Desktop/pdf_kit_pro.html" ]; then
+            rm -rf dist/pdf-kit-pro
+            mkdir -p dist/pdf-kit-pro
+            cp -R PDF_Kit_Pro_Desktop/. dist/pdf-kit-pro/
+          else
+            # Temporary fallback until the original package is uploaded to the repo.
+            cp -R pdf-kit-pro dist/pdf-kit-pro
+          fi
+
+          if [ -f dist/pdf-kit-pro/pdf_kit_pro.html ]; then
+            echo "$EXACT_PDFKIT_HASH  dist/pdf-kit-pro/pdf_kit_pro.html" | sha256sum -c -
+            printf '%s\n' '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PDF KIT PRO</title><script>location.replace("pdf_kit_pro.html"+location.search+location.hash)</script></head><body></body></html>' > dist/pdf-kit-pro/index.html
+          fi
 
           touch dist/.nojekyll
 
@@ -66,11 +87,21 @@ jobs:
           test -s dist/multi-user/storage.js
           test -s dist/multi-user/supabase-config.js
           test -s dist/pdf-kit-pro/index.html
-          test -s dist/pdf-kit-pro/app.js
           grep -q 'exportChoiceDialog' dist/index.html
           grep -q 'openPdfKitPro' dist/app.js
+          grep -q "localStorage.setItem('pk7'" dist/app.js
           grep -q 'showDirectoryPicker' dist/data-sheet-viewer.js
-          grep -q 'grohe-pdfkit-transfer' dist/pdf-kit-pro/app.js
+
+          if [ -f dist/pdf-kit-pro/pdf_kit_pro.html ]; then
+            test -s dist/pdf-kit-pro/package.json
+            test -s dist/pdf-kit-pro/main.js
+            test -s dist/pdf-kit-pro/preload.js
+            test -s dist/pdf-kit-pro/README.txt
+            echo "$EXACT_PDFKIT_HASH  dist/pdf-kit-pro/pdf_kit_pro.html" | sha256sum -c -
+          else
+            test -s dist/pdf-kit-pro/app.js
+            grep -q 'grohe-pdfkit-transfer' dist/pdf-kit-pro/app.js
+          fi
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
