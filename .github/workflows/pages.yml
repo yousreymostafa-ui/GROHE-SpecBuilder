@@ -1,4 +1,4 @@
-name: Deploy GROHE SpecBuilder v18.4.6
+name: Deploy GROHE SpecBuilder releases
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v18.4.6
+      - name: Checkout releases
         uses: actions/checkout@v4
 
       - name: Prepare static site
@@ -26,6 +26,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist
+
+          # Current v18.4.6 release stays at the existing root route.
           cp index.html dist/
           cp favicon.svg dist/
           cp styles.css dist/
@@ -37,10 +39,39 @@ jobs:
           cp seed-products.js dist/
           cp app.js dist/
           cp data-sheet-viewer.js dist/
+
+          # Multi-user release is published under /multi-user/.
+          mkdir -p dist/multi-user
+          cp index.html dist/multi-user/
+          cp favicon.svg dist/multi-user/
+          cp styles.css dist/multi-user/
+          cp card-pdf-actions.css dist/multi-user/
+          cp missing-image-google.css dist/multi-user/
+          cp data-sheet-viewer.css dist/multi-user/
+          cp core.js dist/multi-user/
+          cp storage.js dist/multi-user/
+          cp seed-products.js dist/multi-user/
+          cp app.js dist/multi-user/
+          cp data-sheet-viewer.js dist/multi-user/
+
+          cd dist/multi-user
+          patch -p0 < ../../.deploy/multi-user/index.html.patch
+          patch -p0 < ../../.deploy/multi-user/styles.css.patch
+          patch -p0 < ../../.deploy/multi-user/storage.js.patch
+          patch -p0 < ../../.deploy/multi-user/app.js.patch
+          cp ../../.deploy/multi-user/auth.js .
+          cp ../../.deploy/multi-user/supabase-config.js .
+          cp ../../.deploy/multi-user/SUPABASE_SETUP.sql .
+          cp ../../.deploy/multi-user/MULTI_USER_SETUP.md .
+          cd ../..
+
           touch dist/.nojekyll
           test -s dist/index.html
           test -s dist/app.js
           test -s dist/seed-products.js
+          test -s dist/multi-user/index.html
+          test -s dist/multi-user/auth.js
+          test -s dist/multi-user/supabase-config.js
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
