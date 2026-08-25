@@ -1,0 +1,20 @@
+--- storage.js
++++ storage.js
+@@ -30,11 +30,12 @@
+     });
+   }
+ 
+-  function getAll(db,store){ return requestResult(db.transaction(store,'readonly').objectStore(store).getAll()).then(x=>x||[]); }
+-  function get(db,store,key){ return requestResult(db.transaction(store,'readonly').objectStore(store).get(key)); }
+-  function put(db,store,value){ const tx=db.transaction(store,'readwrite'); tx.objectStore(store).put(value); return txDone(tx); }
+-  function remove(db,store,key){ const tx=db.transaction(store,'readwrite'); tx.objectStore(store).delete(key); return txDone(tx); }
+-  function clear(db,store){ const tx=db.transaction(store,'readwrite'); tx.objectStore(store).clear(); return txDone(tx); }
++  function cloudProjects(store){ return store==='projects' && !!window.GROHEAuth?.isSignedIn?.(); }
++  function getAll(db,store){ if(cloudProjects(store)) return window.GROHEAuth.listProjects(); return requestResult(db.transaction(store,'readonly').objectStore(store).getAll()).then(x=>x||[]); }
++  function get(db,store,key){ if(cloudProjects(store)) return window.GROHEAuth.getProject(key); return requestResult(db.transaction(store,'readonly').objectStore(store).get(key)); }
++  function put(db,store,value){ if(cloudProjects(store)) return window.GROHEAuth.putProject(value); const tx=db.transaction(store,'readwrite'); tx.objectStore(store).put(value); return txDone(tx); }
++  function remove(db,store,key){ if(cloudProjects(store)) return window.GROHEAuth.deleteProject(key); const tx=db.transaction(store,'readwrite'); tx.objectStore(store).delete(key); return txDone(tx); }
++  function clear(db,store){ if(cloudProjects(store)) return window.GROHEAuth.clearProjects(); const tx=db.transaction(store,'readwrite'); tx.objectStore(store).clear(); return txDone(tx); }
+ 
+   window.GROHEStorage=Object.freeze({open,getAll,get,put,remove,clear});
+ })();
