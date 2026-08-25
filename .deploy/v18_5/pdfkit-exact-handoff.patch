@@ -1,0 +1,30 @@
+--- app.js
++++ app.js
+@@ -3855,6 +3855,26 @@
+ function openPdfKitPro(){
+   const payload=pdfKitTransferPayload();
+   if(!payload)return;
+-  try{sessionStorage.setItem('grohe-pdfkit-transfer',JSON.stringify(payload));}catch(e){console.warn('Could not transfer selection to PDF Kit Pro',e);}
++  const kitProject=[payload.projectName,payload.selectionName].filter(Boolean).join(' - ');
++  const kitState={
++    items:(payload.items||[]).map(item=>({
++      id:item.id||uid(),
++      type:item.type==='separator'?'separator':'file',
++      name:item.type==='separator'?(item.name||'Break'):(item.sku||item.name||'')
++    })).filter(x=>x.name),
++    cover:{
++      title:'Technical Data Sheet',
++      subtitle:'',
++      project:kitProject||payload.projectName||'Project',
++      date:today(),
++      author:'',
++      enabled:true,
++      tocEnabled:true
++    }
++  };
++  try{
++    sessionStorage.setItem('grohe-pdfkit-transfer',JSON.stringify(payload));
++    localStorage.setItem('pk7',JSON.stringify(kitState));
++  }catch(e){console.warn('Could not transfer selection to PDF Kit Pro',e);}
+   location.href=new URL('pdf-kit-pro/',document.baseURI).href;
+ }
