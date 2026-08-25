@@ -50,6 +50,11 @@ jobs:
           cp .deploy/v18_6/settings-ui.css dist/settings-ui.css
           python3 -c "from pathlib import Path; p=Path('dist/index.html'); s=p.read_text(); s=s.replace('</head>','  <link rel=\"stylesheet\" href=\"settings-ui.css\" />\\n</head>',1).replace('</body>','  <script src=\"settings-ui.js\"></script>\\n</body>',1); p.write_text(s)"
 
+          # v18.7 right-panel controls, scrollbar cleanup and export guard.
+          cp .deploy/v18_7/ui-fixes.js dist/ui-fixes.js
+          cp .deploy/v18_7/ui-fixes.css dist/ui-fixes.css
+          python3 -c "from pathlib import Path; p=Path('dist/index.html'); s=p.read_text(); s=s.replace('</head>','  <link rel=\"stylesheet\" href=\"ui-fixes.css\" />\\n</head>',1).replace('</body>','  <script src=\"ui-fixes.js\"></script>\\n</body>',1); p.write_text(s)"
+
           # Browser-capable Data Sheet locator based on PDF Kit Pro 12.11.1 matching.
           cp .deploy/v18_5/data-sheet-viewer.js dist/data-sheet-viewer.js
 
@@ -87,19 +92,27 @@ jobs:
           test -s dist/data-sheet-viewer.js
           test -s dist/settings-ui.js
           test -s dist/settings-ui.css
+          test -s dist/ui-fixes.js
+          test -s dist/ui-fixes.css
           test -s dist/multi-user/index.html
           test -s dist/multi-user/loader.js
           test -s dist/multi-user/auth.js
           test -s dist/multi-user/storage.js
           test -s dist/multi-user/supabase-config.js
           test -s dist/pdf-kit-pro/index.html
-          grep -q 'exportChoiceDialog' dist/index.html
+          grep -q 'btnExportPdfOnly' dist/index.html
           grep -q 'settings-ui.js' dist/index.html
+          grep -q 'ui-fixes.js' dist/index.html
           grep -q 'settingsWorkspaceDialog' dist/settings-ui.js
           grep -q 'btnBackExportChoice' dist/settings-ui.js
+          grep -q 'selectionTextSize' dist/ui-fixes.js
+          grep -q 'scrollbar-width:none' dist/ui-fixes.css
           grep -q 'openPdfKitPro' dist/app.js
+          grep -q 'btnExportPdfOnly' dist/app.js
           grep -q "localStorage.setItem('pk7'" dist/app.js
           grep -q 'showDirectoryPicker' dist/data-sheet-viewer.js
+          grep -q '20260826-1' dist/multi-user/loader.js
+          grep -q 'favicon.svg?v=20260826-1' dist/multi-user/index.html
 
           if [ -f dist/pdf-kit-pro/pdf_kit_pro.html ]; then
             test -s dist/pdf-kit-pro/package.json
