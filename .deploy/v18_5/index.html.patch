@@ -1,6 +1,6 @@
 --- index.html
 +++ index.html
-@@ -432,6 +432,18 @@
+@@ -432,6 +432,19 @@
        <div id="specDialogGrid" class="spec-grid"></div>
      </div>
    </dialog>
@@ -11,7 +11,8 @@
 +      <p class="export-choice-intro">Choose how you want to prepare this selection.</p>
 +      <div class="export-choice-grid">
 +        <button type="button" class="export-choice-card" id="btnExportExcelOnly"><strong>Excel</strong><span>Export the current selection as an Excel specification with product pictures.</span><b>Export Excel →</b></button>
-+        <button type="button" class="export-choice-card featured" id="btnExportExcelPdf"><strong>Excel + PDF</strong><span>Export Excel, then open PDF Kit Pro 12.11.1 with this selection ready for data-sheet matching and merging.</span><b>Continue to PDF Kit Pro →</b></button>
++        <button type="button" class="export-choice-card featured" id="btnExportPdfOnly"><strong>PDF</strong><span>Open PDF Kit Pro 12.11.1 directly with the current selection for data-sheet matching and merged PDF export.</span><b>Open PDF Kit Pro →</b></button>
++        <button type="button" class="export-choice-card" id="btnExportExcelPdf"><strong>Excel + PDF</strong><span>Export Excel first, then open PDF Kit Pro 12.11.1 with the same selection.</span><b>Export both →</b></button>
 +      </div>
 +    </div>
 +  </dialog>
