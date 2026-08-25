@@ -1,17 +1,1 @@
-(async()=>{
-  'use strict';
-  try{
-    const session=await window.GROHEAuth?.requireSession?.();
-    if(!session) return;
-    const script=document.createElement('script');
-    script.src='../app.js';
-    script.defer=false;
-    document.body.appendChild(script);
-  }catch(err){
-    console.error(err);
-    const gate=document.getElementById('authGate');
-    if(gate) gate.hidden=false;
-    const msg=document.getElementById('authMessage');
-    if(msg){msg.hidden=false;msg.dataset.type='error';msg.textContent=err?.message||'Could not initialize secure workspace.';}
-  }
-})();
+(async()=>{'use strict';try{await window.GROHEAuth?.initialize?.();const s=document.createElement('script');s.src='../app.js';s.defer=false;document.body.appendChild(s)}catch(err){console.error(err);const s=document.createElement('script');s.src='../app.js';s.defer=false;document.body.appendChild(s)}})();
