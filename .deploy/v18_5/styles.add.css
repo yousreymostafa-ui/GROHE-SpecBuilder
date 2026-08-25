@@ -1,2 +1,13 @@
 /* Export choice + PDF Kit Pro handoff */
 .export-choice-intro{margin:0 0 14px;color:#667887;font-size:12px}.export-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.export-choice-card{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:7px;padding:18px;border:1px solid #d9e3eb;border-radius:11px;background:#fff;color:#173042;cursor:pointer;min-height:150px}.export-choice-card:hover{border-color:#8fb8d3;background:#f8fbfd}.export-choice-card.featured{border-color:#8ebad5;background:#f1f8fc}.export-choice-card strong{font-size:15px}.export-choice-card span{font-size:11px;line-height:1.5;color:#6b7c89;flex:1}.export-choice-card b{font-size:11px;color:#0068a8}@media(max-width:620px){.export-choice-grid{grid-template-columns:1fr}}
+
+/* v18.5.1 — image hover stays attached to the thumbnail, never to the pointer. */
+.image-hover-preview{display:none!important}
+.fast-card .product-img,.seq-img{position:relative;overflow:hidden!important}
+.fast-card .product-img img,.seq-img img{transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;transform-origin:center center}
+.fast-card .product-img:hover,.seq-img:hover{overflow:visible!important;z-index:120}
+.fast-card .product-img:hover img,.seq-img:hover img{transform:scale(1.5);position:relative;z-index:121;background:#fff;border:1px solid #d8e3ea;border-radius:10px;box-shadow:0 12px 28px rgba(25,50,69,.15)}
+
+/* Keep selection tabs scrollable by wheel/touch without showing the native scrollbar/arrow. */
+.selection-tabs-strip{overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important}
+.selection-tabs-strip::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
