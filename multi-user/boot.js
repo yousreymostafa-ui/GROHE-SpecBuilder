@@ -1,1 +1,1 @@
-(async()=>{'use strict';try{await window.GROHEAuth?.initialize?.()}catch(err){console.warn('Account features unavailable; continuing as guest.',err)}const s=document.createElement('script');s.src='app.js';s.defer=false;document.body.appendChild(s)})();
+(async()=>{'use strict';try{await window.GROHEAuth?.initialize?.()}catch(err){console.warn('Account features unavailable; continuing as guest.',err)}const s=document.createElement('script');s.src='app.js?v=20260826-1';s.defer=false;document.body.appendChild(s)})();
