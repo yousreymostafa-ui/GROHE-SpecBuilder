@@ -1,0 +1,83 @@
+--- index.html
++++ index.html
+@@ -15,6 +15,28 @@
+ </head>
+ <body>
+ 
++  <section id="authGate" class="auth-gate" hidden aria-label="Sign in to GROHE SpecBuilder">
++    <div class="auth-card">
++      <div class="auth-brand">
++        <div class="auth-logo">GROHE</div>
++        <div><strong>GROHE SpecBuilder</strong><span>Professional project specification workspace</span></div>
++      </div>
++      <div id="authSetupHelp" class="auth-setup-help" hidden>
++        <strong>One-time cloud setup required</strong>
++        <p>Connect this web build to Supabase using <code>supabase-config.js</code>, then reload the page. See <code>MULTI_USER_SETUP.md</code>.</p>
++      </div>
++      <form id="authForm" class="auth-form">
++        <div class="auth-title"><h1>Sign in</h1><p>Your projects are private and saved to your own account.</p></div>
++        <label><span>Name <small>(for new accounts)</small></span><input id="authDisplayName" autocomplete="name" placeholder="Your name" /></label>
++        <label><span>Email</span><input id="authEmail" type="email" autocomplete="username" placeholder="name@company.com" required /></label>
++        <label><span>Password</span><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password" required /></label>
++        <div id="authMessage" class="auth-message" hidden></div>
++        <button class="btn primary auth-primary" type="submit">Sign in</button>
++        <div class="auth-secondary-actions"><button type="button" class="text-btn" id="btnCreateAccount">Create account</button><button type="button" class="text-btn" id="btnForgotPassword">Forgot password?</button></div>
++      </form>
++    </div>
++  </section>
++
+   <main class="app-shell">
+     <header class="app-header app-header-main">
+       <div class="app-brand" aria-label="GROHE products builder">
+@@ -51,6 +73,11 @@
+             <div class="thumbnail-setting"><div><span>Selection panel width</span><strong id="selectionPanelWidthValue">400 px</strong></div><input type="range" id="selectionPanelWidth" min="320" max="760" step="10" value="400" aria-label="Selection panel width" /></div>
+             <label class="columns-setting"><span>Density</span><select id="uiDensity" aria-label="Interface density"><option value="compact">Compact</option><option value="comfortable" selected>Comfortable</option><option value="spacious">Spacious</option></select></label>
+             <button class="menu-action" id="btnResetLayout">Reset layout</button>
++
++            <div class="menu-divider"></div><div class="menu-section-title">Account</div>
++            <div class="account-setting-status"><span>Signed in as</span><strong id="settingsUserEmail">Loading…</strong></div>
++            <button class="menu-action" id="btnProfile" type="button">Profile & login details…</button>
++            <button class="menu-action danger-text" id="btnSignOut" type="button">Sign out</button>
+             <div class="menu-divider"></div><div class="menu-section-title">System</div>
+             <button class="menu-action" id="btnDatabase">Manage Products</button>
+             <div class="image-setting-status"><span>Product images</span><strong id="settingsImageCount">Not loaded</strong></div>
+@@ -155,6 +182,20 @@
+   <input type="file" id="csvFileInput" hidden accept=".csv,.txt,.tsv" />
+   <input type="file" id="fallbackImageFolder" webkitdirectory multiple hidden accept="image/*" />
+ 
++
++  <dialog id="profileDialog" class="modal medium profile-dialog">
++    <div class="modal-header"><div><div class="eyebrow">ACCOUNT</div><h3>Profile & Login Details</h3></div><button class="icon-btn" data-close="profileDialog">✕</button></div>
++    <div class="modal-body profile-body">
++      <div class="profile-summary"><div class="profile-avatar" id="profileAvatar">U</div><div><strong id="profileCurrentEmail">—</strong><small>Projects are stored privately under this account.</small></div></div>
++      <label class="field full"><span>Display name</span><input id="profileDisplayName" autocomplete="name" /></label>
++      <label class="field full"><span>Email</span><input id="profileEmail" type="email" autocomplete="email" /><small>Changing email may require confirmation from the new address.</small></label>
++      <label class="field full"><span>New password</span><input id="profileNewPassword" type="password" autocomplete="new-password" placeholder="Leave blank to keep current password" /><small>Use at least 8 characters.</small></label>
++      <div class="profile-storage-card"><span>Project storage</span><strong>Private cloud storage</strong><small>Only this signed-in user can read, edit or delete these projects.</small></div>
++      <div id="profileMessage" class="auth-message" hidden></div>
++    </div>
++    <div class="modal-footer"><button type="button" class="btn danger-text" id="btnProfileSignOut">Sign out</button><button type="button" class="btn primary" id="btnSaveProfile">Save profile</button></div>
++  </dialog>
++
+   <dialog id="projectDialog" class="modal medium">
+     <form method="dialog" id="projectForm">
+       <div class="modal-header"><div><div class="eyebrow">PROJECT</div><h3 id="projectDialogTitle">New Project</h3></div><button value="cancel" class="icon-btn">✕</button></div>
+@@ -191,7 +232,7 @@
+   </dialog>
+ 
+   <dialog id="projectsDialog" class="modal large">
+-    <div class="modal-header"><div><div class="eyebrow">SAVED LOCALLY</div><h3>Project Management</h3></div><button class="icon-btn" data-close="projectsDialog">✕</button></div>
++    <div class="modal-header"><div><div class="eyebrow">MY CLOUD PROJECTS</div><h3>Project Management</h3></div><button class="icon-btn" data-close="projectsDialog">✕</button></div>
+     <div class="modal-body">
+       <div class="projects-toolbar"><input id="projectSearch" placeholder="Search project / customer..." /><label><input type="checkbox" id="showArchivedProjects" /> Show archived</label></div>
+       <div id="projectsList" class="projects-list"></div>
+@@ -449,6 +490,9 @@
+   <div id="toast" class="toast" role="status"></div>
+   <div id="imageHoverPreview" class="image-hover-preview" aria-hidden="true"></div>
+ 
++  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
++  <script src="supabase-config.js"></script>
++  <script src="auth.js"></script>
+   <script src="core.js"></script>
+   <script src="storage.js"></script>
+   <script src="seed-products.js"></script>
