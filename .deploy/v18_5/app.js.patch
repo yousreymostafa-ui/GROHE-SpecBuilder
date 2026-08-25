@@ -1,6 +1,6 @@
 --- app.js
 +++ app.js
-@@ -3838,6 +3838,30 @@
+@@ -3838,6 +3838,34 @@
    $('exportSection').innerHTML='<option value="">All sections</option>'+currentSectionNames().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
    $('exportDialog').showModal();
  }
@@ -23,6 +23,10 @@
 +  try{sessionStorage.setItem('grohe-pdfkit-transfer',JSON.stringify(payload));}catch(e){console.warn('Could not transfer selection to PDF Kit Pro',e);}
 +  location.href=new URL('pdf-kit-pro/',document.baseURI).href;
 +}
++function exportPdfOnly(){
++  const d=$('exportChoiceDialog');if(d?.open)d.close();
++  openPdfKitPro();
++}
 +async function exportExcelAndOpenPdfKit(){
 +  const d=$('exportChoiceDialog');if(d?.open)d.close();
 +  await exportExcel();
@@ -31,12 +35,12 @@
  
  function exportRowsForSection(sectionName=''){
    const rows=projectExportRows(); if(!sectionName) return rows;
-@@ -4096,7 +4120,7 @@
+@@ -4096,7 +4124,7 @@
    $('btnAddSection').onclick=addSection; $('btnAddSection2').onclick=addSection; $('btnClearSequence').onclick=clearSequence;
    if($('roomFinishSelect'))$('roomFinishSelect').onchange=updateRoomFinishPreview;
    if($('btnApplyRoomFinish'))$('btnApplyRoomFinish').onclick=applyRoomFinish;
 -  $('btnDatabase').onclick=async()=>{$('databaseDialog').showModal();state.dbLimit=120;setDbTab('products');await renderDatabaseManager();}; $('btnExport').onclick=openExportDialog; $('btnRunExport').onclick=runPresetExport;
-+  $('btnDatabase').onclick=async()=>{$('databaseDialog').showModal();state.dbLimit=120;setDbTab('products');await renderDatabaseManager();}; $('btnExport').onclick=openExportChoice; $('btnRunExport').onclick=runPresetExport; const exportExcelOnly=$('btnExportExcelOnly');if(exportExcelOnly)exportExcelOnly.onclick=()=>{closeDialogIfOpen('exportChoiceDialog');openExportDialog();}; const exportExcelPdf=$('btnExportExcelPdf');if(exportExcelPdf)exportExcelPdf.onclick=exportExcelAndOpenPdfKit;
++  $('btnDatabase').onclick=async()=>{$('databaseDialog').showModal();state.dbLimit=120;setDbTab('products');await renderDatabaseManager();}; $('btnExport').onclick=openExportChoice; $('btnRunExport').onclick=runPresetExport; const exportExcelOnly=$('btnExportExcelOnly');if(exportExcelOnly)exportExcelOnly.onclick=()=>{closeDialogIfOpen('exportChoiceDialog');openExportDialog();}; const exportPdfOnlyBtn=$('btnExportPdfOnly');if(exportPdfOnlyBtn)exportPdfOnlyBtn.onclick=exportPdfOnly; const exportExcelPdf=$('btnExportExcelPdf');if(exportExcelPdf)exportExcelPdf.onclick=exportExcelAndOpenPdfKit;
    $('btnLoadImagesMenu').onclick=connectImageFolder; $('btnLoadImagesAudit').onclick=connectImageFolder;
    if($('btnMissingImagesOnly')) $('btnMissingImagesOnly').onclick=()=>setMissingImagesOnly(!state.showMissingImagesOnly); if($('btnMissingImagesSidebar')) $('btnMissingImagesSidebar').onclick=()=>setMissingImagesOnly(!state.showMissingImagesOnly);
    $('fallbackImageFolder').onchange=e=>indexFallbackImageFiles(e.target.files);
