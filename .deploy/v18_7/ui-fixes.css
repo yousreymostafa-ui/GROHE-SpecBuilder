@@ -1,0 +1,15 @@
+/* GROHE SpecBuilder v18.7 UI fixes */
+.sequence-list{scrollbar-width:none!important;-ms-overflow-style:none!important}
+.sequence-list::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+.selection-text-setting{padding:8px;border-top:1px solid var(--line);margin-top:3px}
+.selection-text-setting>div{display:flex;justify-content:space-between;font-size:calc(8px * var(--ui-font-scale));margin-bottom:6px}
+.selection-text-setting strong{font-weight:500}
+.selection-text-setting input{width:100%;accent-color:var(--blue)}
+.sequence-panel .seq-sku{font-size:var(--seq-sku-font,calc(10.3px * var(--ui-font-scale)))!important}
+.sequence-panel .seq-desc{font-size:var(--seq-desc-font,calc(9px * var(--ui-font-scale)))!important}
+.sequence-panel .seq-parent-ref{font-size:var(--seq-parent-font,calc(6.8px * var(--ui-font-scale)))!important}
+.sequence-panel .room-name-label{font-size:var(--seq-break-font,calc(10px * var(--ui-font-scale)))!important}
+.sequence-panel .room-finish-label{font-size:var(--seq-break-finish-font,calc(7.5px * var(--ui-font-scale)))!important}
+.sequence-panel .body-choice>span{font-size:var(--seq-body-label-font,calc(6.5px * var(--ui-font-scale)))!important}
+.sequence-panel .body-choice select{font-size:var(--seq-body-select-font,calc(7.7px * var(--ui-font-scale)))!important}
+.sequence-panel .required-body-missing span{font-size:var(--seq-required-font,calc(7.2px * var(--ui-font-scale)))!important}
