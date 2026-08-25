@@ -1,0 +1,42 @@
+--- app.js
++++ app.js
+@@ -3838,6 +3838,30 @@
+   $('exportSection').innerHTML='<option value="">All sections</option>'+currentSectionNames().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+   $('exportDialog').showModal();
+ }
++function openExportChoice(){
++  if(!state.project){openProjectDialog('new');return;}
++  const d=$('exportChoiceDialog');
++  if(d&&!d.open)d.showModal();
++}
++function pdfKitTransferPayload(){
++  if(!state.project)return null;
++  const items=(state.project.items||[]).map(item=>item.type==='section'
++    ?{id:item.id,type:'separator',name:item.title||'Break'}
++    :{id:item.id,type:'file',name:item.sku,sku:item.sku,description:getProduct(item.sku)?.description||'',auto:!!item.auto,qty:item.qty||1}
++  );
++  return {version:'12.11.1',source:'GROHE SpecBuilder',projectName:state.project.name||'Project',customer:state.project.customer||'',selectionName:activeSelectionOption()?.name||'Selection',items};
++}
++function openPdfKitPro(){
++  const payload=pdfKitTransferPayload();
++  if(!payload)return;
++  try{sessionStorage.setItem('grohe-pdfkit-transfer',JSON.stringify(payload));}catch(e){console.warn('Could not transfer selection to PDF Kit Pro',e);}
++  location.href=new URL('pdf-kit-pro/',document.baseURI).href;
++}
++async function exportExcelAndOpenPdfKit(){
++  const d=$('exportChoiceDialog');if(d?.open)d.close();
++  await exportExcel();
++  openPdfKitPro();
++}
+ 
+ function exportRowsForSection(sectionName=''){
+   const rows=projectExportRows(); if(!sectionName) return rows;
+@@ -4096,7 +4120,7 @@
+   $('btnAddSection').onclick=addSection; $('btnAddSection2').onclick=addSection; $('btnClearSequence').onclick=clearSequence;
+   if($('roomFinishSelect'))$('roomFinishSelect').onchange=updateRoomFinishPreview;
+   if($('btnApplyRoomFinish'))$('btnApplyRoomFinish').onclick=applyRoomFinish;
+-  $('btnDatabase').onclick=async()=>{$('databaseDialog').showModal();state.dbLimit=120;setDbTab('products');await renderDatabaseManager();}; $('btnExport').onclick=openExportDialog; $('btnRunExport').onclick=runPresetExport;
++  $('btnDatabase').onclick=async()=>{$('databaseDialog').showModal();state.dbLimit=120;setDbTab('products');await renderDatabaseManager();}; $('btnExport').onclick=openExportChoice; $('btnRunExport').onclick=runPresetExport; const exportExcelOnly=$('btnExportExcelOnly');if(exportExcelOnly)exportExcelOnly.onclick=()=>{closeDialogIfOpen('exportChoiceDialog');openExportDialog();}; const exportExcelPdf=$('btnExportExcelPdf');if(exportExcelPdf)exportExcelPdf.onclick=exportExcelAndOpenPdfKit;
+   $('btnLoadImagesMenu').onclick=connectImageFolder; $('btnLoadImagesAudit').onclick=connectImageFolder;
+   if($('btnMissingImagesOnly')) $('btnMissingImagesOnly').onclick=()=>setMissingImagesOnly(!state.showMissingImagesOnly); if($('btnMissingImagesSidebar')) $('btnMissingImagesSidebar').onclick=()=>setMissingImagesOnly(!state.showMissingImagesOnly);
+   $('fallbackImageFolder').onchange=e=>indexFallbackImageFiles(e.target.files);
