@@ -1,0 +1,45 @@
+--- app.js
++++ app.js
+@@ -2673,7 +2673,7 @@
+   $('projectName').textContent=p.name;
+   const parts=[]; const activeOption=activeSelectionOption(p); if(activeOption)parts.push(activeOption.name); if(p.customer) parts.push(p.customer); if(p.date) parts.push(p.date); if(p.finish) parts.push(`${p.finish} (${finishCode(p.finish)})`); else parts.push('Mixed finish');
+   $('projectMeta').textContent=parts.join(' · ');
+-  $('projectSavedBadge').textContent='Saved locally'; $('projectSavedBadge').className='status-chip good';
++  $('projectSavedBadge').textContent='Saved to cloud'; $('projectSavedBadge').className='status-chip good';
+   ensureRequiredComponents(false).then(async changed=>{
+     if(changed){
+       await touchProject();
+@@ -2912,7 +2912,7 @@
+     state.project={id:uid(),name,customer:$('projectInputCustomer').value.trim(),date:$('projectInputDate').value||today(),finish:firstOption.finish,items:firstOption.items,options:[firstOption],activeOptionId:firstOption.id,createdAt,updatedAt:createdAt};
+     resetProjectHistory();
+   }
+-  await touchProject(); $('projectDialog').close(); renderProject(); toast('Project saved locally');
++  await touchProject(); $('projectDialog').close(); renderProject(); toast('Project saved to your account');
+ }
+ 
+ async function saveCurrentProject(){ if(!state.project){openProjectDialog('new');return;} await touchProject(); renderProject(); toast('Project saved'); }
+@@ -3006,7 +3006,7 @@
+   const name=$('manageProjectName'),meta=$('manageProjectMeta');if(!name||!meta)return;
+   if(!state.project){name.textContent='No project open';meta.textContent='Create or open a project to start working.';return;}
+   name.textContent=state.project.name||'Untitled project';
+-  meta.textContent=`${[state.project.customer,state.project.date].filter(Boolean).join(' · ')||'Local project'} · ${projectManagementSummary(state.project)}`;
++  meta.textContent=`${[state.project.customer,state.project.date].filter(Boolean).join(' · ')||'Cloud project'} · ${projectManagementSummary(state.project)}`;
+ }
+ async function loadProjectManagementData(){
+   state.projects=(await idbGetAll(STORE_PROJECTS)).sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
+@@ -4192,6 +4192,8 @@
+ 
+ async function init(){
+   validateRuntimeContract();
++  const authSession=await window.GROHEAuth?.requireSession?.();
++  if(!authSession) return;
+   setupEvents();
+   initWorkspaceResizer();
+   initCatalogSidebarResizer();
+@@ -4225,5 +4227,5 @@
+   if(!state.project && !state.projects.length) setTimeout(()=>openProjectDialog('new'),250);
+ }
+ 
+-init().catch(err=>{console.error(err);toast('Could not initialize local database. See console.',5000);});
++init().catch(err=>{console.error(err);toast('Could not initialize GROHE SpecBuilder. See console.',5000);});
+ })();
