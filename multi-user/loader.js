@@ -3,6 +3,7 @@
 try{
  const response=await fetch('../index.html',{cache:'no-store'});if(!response.ok)throw new Error('Could not load the main SpecBuilder application.');let html=await response.text();
  html=html.replace('<head>','<head><base href="../"><link rel="stylesheet" href="multi-user/auth.css">');
+ const accountButton='<button type="button" id="btnProfileHeader" class="multi-user-account-btn">Sign in</button>';
  const accountMarkup=`
 <dialog id="accountDialog" class="account-dialog">
   <div class="account-shell">
@@ -16,9 +17,10 @@ try{
     </div>
   </div>
 </dialog>
-<button type="button" id="btnProfileHeader" class="multi-user-account-btn">Sign in</button>
 <dialog id="profileDialog" class="modal medium profile-dialog"><div class="modal-header"><div><div class="eyebrow">ACCOUNT</div><h3>Profile & Login Details</h3></div><button class="icon-btn" data-close="profileDialog">✕</button></div><div class="modal-body profile-body"><div class="profile-summary"><div class="profile-avatar" id="profileAvatar">U</div><div><strong id="profileCurrentEmail">—</strong><small>Your projects are stored privately under this account.</small></div></div><label class="field full"><span>Display name</span><input id="profileDisplayName" autocomplete="name"></label><label class="field full"><span>Email</span><input id="profileEmail" type="email" autocomplete="email"><small>Changing email may require confirmation.</small></label><label class="field full"><span>New password</span><input id="profileNewPassword" type="password" autocomplete="new-password" placeholder="Leave blank to keep current password"><small>Use at least 8 characters.</small></label><div class="profile-storage-card"><span>Project storage</span><strong>Private cloud storage</strong><small>Only this signed-in user can access these cloud projects.</small></div><div id="profileMessage" class="auth-message" hidden></div></div><div class="modal-footer"><button type="button" class="btn danger-text" id="btnProfileSignOut">Sign out</button><button type="button" class="btn primary" id="btnSaveProfile">Save profile</button></div></dialog>`;
  html=html.replace('</body>',accountMarkup+'</body>');
+ const settingsTag='<details class="action-menu settings-menu" id="projectMenu">';
+ html=html.replace(settingsTag,accountButton+settingsTag);
  const scriptClose='</scr'+'ipt>',coreTag='<script src="core.js">'+scriptClose,storageTag='<script src="storage.js">'+scriptClose,appTag='<script src="app.js">'+scriptClose;
  html=html.replace(coreTag,'<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">'+scriptClose+'<script src="multi-user/supabase-config.js">'+scriptClose+'<script src="multi-user/auth.js">'+scriptClose+coreTag);
  html=html.replace(storageTag,'<script src="multi-user/storage.js">'+scriptClose);html=html.replace(appTag,'<script src="multi-user/boot.js">'+scriptClose);
