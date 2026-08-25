@@ -1,0 +1,21 @@
+--- index.html
++++ index.html
+@@ -432,6 +432,18 @@
+       <div id="specDialogGrid" class="spec-grid"></div>
+     </div>
+   </dialog>
++
++  <dialog id="exportChoiceDialog" class="modal medium export-choice-dialog">
++    <div class="modal-header"><div><div class="eyebrow">EXPORT</div><h3>Export Selection</h3></div><button class="icon-btn" data-close="exportChoiceDialog">✕</button></div>
++    <div class="modal-body">
++      <p class="export-choice-intro">Choose how you want to prepare this selection.</p>
++      <div class="export-choice-grid">
++        <button type="button" class="export-choice-card" id="btnExportExcelOnly"><strong>Excel</strong><span>Export the current selection as an Excel specification with product pictures.</span><b>Export Excel →</b></button>
++        <button type="button" class="export-choice-card featured" id="btnExportExcelPdf"><strong>Excel + PDF</strong><span>Export Excel, then open PDF Kit Pro 12.11.1 with this selection ready for data-sheet matching and merging.</span><b>Continue to PDF Kit Pro →</b></button>
++      </div>
++    </div>
++  </dialog>
++
+   <dialog id="exportDialog" class="modal medium">
+     <div class="modal-header"><div><div class="eyebrow">EXCEL</div><h3>Export Selection</h3></div><button class="icon-btn" data-close="exportDialog">✕</button></div>
+     <div class="modal-body"><div class="export-presets"><label><input type="radio" name="exportPreset" value="standard" checked /> Standard selection</label><label><input type="radio" name="exportPreset" value="sku" /> SKU + Qty only</label><label><input type="radio" name="exportPreset" value="purchasing" /> Purchasing</label><label><input type="radio" name="exportPreset" value="technical" /> Technical submission</label></div><label class="field"><span>Section</span><select id="exportSection"><option value="">All sections</option></select></label></div>
