@@ -59,6 +59,11 @@ jobs:
           cp .deploy/v18_8/pruned-sync.js dist/pruned-sync.js
           python3 -c "from pathlib import Path; p=Path('dist/index.html'); s=p.read_text(); s=s.replace('<script src=\"app.js\"></script>','<script src=\"pruned-sync.js\"></script>\\n<script src=\"app.js\"></script>',1); p.write_text(s)"
 
+          # v18.9 unified design system + responsive workspace.
+          cp .deploy/v18_9/design-system.css dist/design-system.css
+          cp .deploy/v18_9/responsive-ui.js dist/responsive-ui.js
+          python3 -c "from pathlib import Path; p=Path('dist/index.html'); s=p.read_text(); s=s.replace('</head>','  <link rel=\"stylesheet\" href=\"design-system.css\" />\\n</head>',1).replace('</body>','  <script src=\"responsive-ui.js\"></script>\\n</body>',1); p.write_text(s)"
+
           # Browser-capable Data Sheet locator based on PDF Kit Pro 12.11.1 matching.
           cp .deploy/v18_5/data-sheet-viewer.js dist/data-sheet-viewer.js
 
@@ -99,6 +104,8 @@ jobs:
           test -s dist/ui-fixes.js
           test -s dist/ui-fixes.css
           test -s dist/pruned-sync.js
+          test -s dist/design-system.css
+          test -s dist/responsive-ui.js
           test -s dist/multi-user/index.html
           test -s dist/multi-user/loader.js
           test -s dist/multi-user/auth.js
@@ -110,6 +117,12 @@ jobs:
           grep -q 'ui-fixes.js' dist/index.html
           grep -q 'pruned-sync.js' dist/index.html
           grep -q 'GROHE_Common_SKUs.xlsx' dist/pruned-sync.js
+          grep -q 'design-system.css' dist/index.html
+          grep -q 'responsive-ui.js' dist/index.html
+          grep -q 'mobile-workspace-nav' dist/responsive-ui.js
+          grep -q 'backend-modal' dist/design-system.css
+          grep -q 'settings-workspace-dialog' dist/design-system.css
+          grep -q '@media(max-width:900px)' dist/design-system.css
           grep -q '30632000' dist/pruned-sync.js
           grep -q '47877000' dist/pruned-sync.js
           grep -q 'settingsWorkspaceDialog' dist/settings-ui.js
@@ -120,8 +133,8 @@ jobs:
           grep -q 'btnExportPdfOnly' dist/app.js
           grep -q "localStorage.setItem('pk7'" dist/app.js
           grep -q 'showDirectoryPicker' dist/data-sheet-viewer.js
-          grep -q '20260827-1' dist/multi-user/loader.js
-          grep -q 'favicon.svg?v=20260827-1' dist/multi-user/index.html
+          grep -q '20260827-2' dist/multi-user/loader.js
+          grep -q 'favicon.svg?v=20260827-2' dist/multi-user/index.html
 
           if [ -f dist/pdf-kit-pro/pdf_kit_pro.html ]; then
             test -s dist/pdf-kit-pro/package.json
