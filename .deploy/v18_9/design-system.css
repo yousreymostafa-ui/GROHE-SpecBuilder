@@ -67,10 +67,10 @@ input:focus,select:focus,textarea:focus{outline:none!important;border-color:#7da
 .product-card.fast-card:hover,.sequence-row:hover{box-shadow:var(--shadow-sm)!important}
 .catalogue-view-popover,.sequence-view-popover,.action-menu-popover{font-size:var(--type-md)!important}
 .selection-image-setting>div,.selection-text-setting>div{font-size:var(--type-sm)!important}
-.sequence-panel .seq-sku{font-size:calc(var(--type-md) * var(--selection-text-scale,1))!important}
-.sequence-panel .seq-desc{font-size:calc(var(--type-md) * var(--selection-text-scale,1))!important}
-.sequence-panel .seq-parent-ref{font-size:calc(var(--type-sm) * var(--selection-text-scale,1))!important}
-.sequence-panel .room-name-label{font-size:calc(var(--type-md) * var(--selection-text-scale,1))!important}
+.sequence-panel .seq-sku{font-size:var(--seq-sku-font,var(--type-md))!important}
+.sequence-panel .seq-desc{font-size:var(--seq-desc-font,var(--type-md))!important}
+.sequence-panel .seq-parent-ref{font-size:var(--seq-parent-font,var(--type-sm))!important}
+.sequence-panel .room-name-label{font-size:var(--seq-break-font,var(--type-md))!important}
 
 /* ---------- settings redesign ---------- */
 .settings-workspace-dialog{
