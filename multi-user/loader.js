@@ -1,7 +1,7 @@
 (async()=>{
 'use strict';
 try{
- const RELEASE='20260827-1';
+ const RELEASE='20260827-2';
  const response=await fetch('../index.html',{cache:'no-store'});if(!response.ok)throw new Error('Could not load the main SpecBuilder application.');let html=await response.text();
  html=html.replace('<head>','<head><base href="../"><link rel="stylesheet" href="multi-user/auth.css?v='+RELEASE+'">');
  const accountButton='<button type="button" id="btnProfileHeader" class="multi-user-account-btn">Sign in</button>';
@@ -25,7 +25,7 @@ try{
  const scriptClose='</scr'+'ipt>',coreTag='<script src="core.js">'+scriptClose,storageTag='<script src="storage.js">'+scriptClose,appTag='<script src="app.js">'+scriptClose;
  html=html.replace(coreTag,'<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">'+scriptClose+'<script src="multi-user/supabase-config.js?v='+RELEASE+'">'+scriptClose+'<script src="multi-user/auth.js?v='+RELEASE+'">'+scriptClose+coreTag);
  html=html.replace(storageTag,'<script src="multi-user/storage.js?v='+RELEASE+'">'+scriptClose);html=html.replace(appTag,'<script src="multi-user/boot.js?v='+RELEASE+'">'+scriptClose);
- const localAssets=['favicon.svg','styles.css','card-pdf-actions.css','missing-image-google.css','data-sheet-viewer.css','core.js','seed-products.js','data-sheet-viewer.js','settings-ui.css','settings-ui.js','ui-fixes.css','ui-fixes.js','pruned-sync.js'];
+ const localAssets=['favicon.svg','styles.css','card-pdf-actions.css','missing-image-google.css','data-sheet-viewer.css','core.js','seed-products.js','data-sheet-viewer.js','settings-ui.css','settings-ui.js','ui-fixes.css','ui-fixes.js','pruned-sync.js','design-system.css','responsive-ui.js'];
  localAssets.forEach(file=>{html=html.replaceAll('href="'+file+'"','href="'+file+'?v='+RELEASE+'"').replaceAll('src="'+file+'"','src="'+file+'?v='+RELEASE+'"');});
  document.open();document.write(html);document.close();
 }catch(err){document.body.innerHTML='<div class="route-loader"><div><strong>Could not load GROHE SpecBuilder</strong><span>'+String(err?.message||err)+'</span></div></div>'}
