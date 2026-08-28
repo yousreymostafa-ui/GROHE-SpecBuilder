@@ -109,7 +109,8 @@ jobs:
           node --check dist/app.js
           node --check dist/multi-user/loader.js
           node --check dist/multi-user/boot.js
-          python3 .deploy/v18_15/validate-refactor.py          test -s dist/index.html
+          python3 .deploy/v18_15/validate-refactor.py
+          test -s dist/index.html
           test -s dist/app.js
           test -s dist/seed-products.js
           test -s dist/data-sheet-viewer.js
@@ -137,6 +138,10 @@ jobs:
           grep -q 'responsive-ui.js' dist/index.html
           grep -q 'mobile-workspace-nav' dist/responsive-ui.js
           grep -q 'btnAutoBreaks' dist/index.html
+          grep -q 'selectionTextSize' dist/index.html
+          grep -q "state.selectionView.textSize=Number(e.target.value)" dist/app.js
+          grep -q "state.selectionView.imageSize=Number(e.target.value)" dist/app.js
+          grep -q 'live sizing contract' dist/ui-refactor.css
           grep -q 'ui-refactor.css' dist/index.html
           grep -q 'function autoCreateBreaks' dist/app.js
           grep -q 'no floating/mouse-follow preview' dist/app.js
@@ -169,10 +174,10 @@ jobs:
           grep -q "\['Selection','Section','SKU','Picture'" dist/app.js
           grep -q "localStorage.setItem('pk7'" dist/app.js
           grep -q 'showDirectoryPicker' dist/data-sheet-viewer.js
-          grep -q '20260829-2' dist/multi-user/loader.js
+          grep -q '20260829-3' dist/multi-user/loader.js
           grep -q "searchParams.get('v')" dist/multi-user/boot.js
           grep -q "s.src='app.js'" dist/multi-user/boot.js
-          grep -q 'favicon.svg?v=20260829-2' dist/multi-user/index.html
+          grep -q 'favicon.svg?v=20260829-3' dist/multi-user/index.html
 
           if [ -f dist/pdf-kit-pro/pdf_kit_pro.html ]; then
             test -s dist/pdf-kit-pro/package.json
