@@ -1,0 +1,66 @@
+--- app.js
++++ app.js
+@@ -611,19 +611,30 @@
+-function inferFinish(p){
+-  if(String(p.finish||'').trim()) return String(p.finish).trim();
+-  const sku=normalizeSku(p.sku||'');
+-  const tail=sku.slice(-6);
+-  for(const [code,name] of FINISH_CODE_PAIRS){
+-    const re=new RegExp(\`\${code}[0-9A-Z]{1,2}$\`,'i');
+-    if(re.test(sku) || tail.includes(code)) return name;
+-  }
+-  const hay=normalizeText([p.description,p.fullText].join(' '));
+-  if(/\bmatte black\b/.test(hay) || /243[0-9a-z]$/.test(sku.toLowerCase())) return 'Matte Black';
+-  // GROHE chrome article numbers commonly end 00 + a revision digit (001/002/003),
+-  // while newer 10-digit numbers often end 0000. Treat both as Chrome so old
+-  // catalogue records participate in finish-variant selection correctly.
+-  if(/00[0-9A-Z]{1,2}$/.test(sku) || /\bchrome\b/.test(hay) || /^\d{6,10}0{2,4}$/.test(sku)) return 'Chrome';
+-  return 'No colour / technical';
+-}
++function skuEncodedFinish(sku=''){
++  const key=normalizeSku(sku);
++  // Strong GROHE article finish suffixes are more reliable than imported text
++  // when the two disagree. 00 + revision is Chrome; 243x is Matte Black.
++  if(/243[0-9A-Z]$/i.test(key)) return 'Matte Black';
++  for(const [code,name] of FINISH_CODE_PAIRS){
++    if(new RegExp(code+'[0-9A-Z]{1,2}$','i').test(key)) return name;
++  }
++  if(/00[0-9A-Z]{1,2}$/i.test(key) || /^\d{6,10}0{2,4}$/.test(key)) return 'Chrome';
++  return '';
++}
++
++function inferFinish(p){
++  const sku=normalizeSku(p.sku||'');
++  const explicit=String(p.finish||'').trim();
++  const encoded=skuEncodedFinish(sku);
++  // Preserve technical/non-colour components. For decorative products, repair
++  // conflicting finish metadata from the SKU suffix.
++  if(encoded && explicit && !/^no colour(?: \/ technical)?$/i.test(explicit) && encoded!==explicit) return encoded;
++  if(explicit) return explicit;
++  if(encoded) return encoded;
++  const hay=normalizeText([p.description,p.fullText].join(' '));
++  if(/\bmatte black\b/.test(hay)) return 'Matte Black';
++  if(/\bchrome\b/.test(hay)) return 'Chrome';
++  return 'No colour / technical';
++}
+@@ -1578,15 +1589,15 @@
+-  if(!skuPrefixMode){
+-    for(const [key,raw] of Object.entries(state.filters)){
+-      const vals=Array.isArray(raw)?raw.filter(Boolean):(raw?[raw]:[]);
+-      if(key!==ignoreKey&&vals.length) list=list.filter(p=>vals.includes(String(p[key]||'')));
+-    }
+-  }
++  // SKU searches narrow the current filtered catalogue; they must not silently
++  // bypass Finish, Category or any other active facet.
++  for(const [key,raw] of Object.entries(state.filters)){
++    const vals=Array.isArray(raw)?raw.filter(Boolean):(raw?[raw]:[]);
++    if(key!==ignoreKey&&vals.length) list=list.filter(p=>vals.includes(String(p[key]||'')));
++  }
+   if(state.showMissingImagesOnly && state.imageFolderConnected) list=list.filter(p=>!getImageFile(p.sku));
+-  if(!skuPrefixMode&&state.viewFilter==='favorites') list=list.filter(p=>state.favorites.has(p.sku));
+-  else if(!skuPrefixMode&&state.viewFilter==='recent'){
++  if(state.viewFilter==='favorites') list=list.filter(p=>state.favorites.has(p.sku));
++  else if(state.viewFilter==='recent'){
+     const rank=new Map(state.recentProducts.map((sku,i)=>[sku,i]));
+     list=list.filter(p=>rank.has(p.sku)).sort((a,b)=>rank.get(a.sku)-rank.get(b.sku));
+   }
