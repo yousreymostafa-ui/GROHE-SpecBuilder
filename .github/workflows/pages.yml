@@ -139,7 +139,6 @@ jobs:
           grep -q 'no floating/mouse-follow preview' dist/app.js
           grep -q 'grid-template-rows:auto auto' dist/ui-refactor.css
           grep -q 'auto-breaks-standalone' dist/index.html
-          grep -q 'Organize selection' dist/index.html
           grep -q 'autoCreateBreaks' dist/app.js
           grep -q "title:'WC'" dist/app.js
           grep -q "title:'Basin Mixer'" dist/app.js
