@@ -57,3 +57,70 @@
     margin-left:20px!important;
   }
 }
+
+
+/* v18.14 permanent standalone Auto Breaks control */
+.auto-breaks-standalone{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:9px!important;
+  min-height:42px!important;
+  padding:5px 10px 5px 6px!important;
+  border:1px solid #b9d7ee!important;
+  border-radius:12px!important;
+  background:linear-gradient(180deg,#f7fbff 0%,#edf7ff 100%)!important;
+  color:#1e5f8d!important;
+  box-shadow:0 1px 2px rgba(30,95,141,.06),0 0 0 1px rgba(255,255,255,.7) inset!important;
+  cursor:pointer!important;
+  white-space:nowrap!important;
+}
+.auto-breaks-standalone:hover{
+  border-color:#8fc2e4!important;
+  background:linear-gradient(180deg,#fafdff 0%,#e7f4fd 100%)!important;
+  box-shadow:0 5px 14px rgba(35,102,151,.10)!important;
+}
+.auto-breaks-standalone:active{transform:translateY(1px)}
+.auto-breaks-icon{
+  width:30px!important;
+  height:30px!important;
+  flex:0 0 30px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid #a9cfea!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  box-shadow:0 2px 6px rgba(30,95,141,.08)!important;
+}
+.auto-breaks-icon svg{
+  width:17px!important;
+  height:17px!important;
+  fill:none!important;
+  stroke:#2d77aa!important;
+  stroke-width:1.55!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+.auto-breaks-copy{
+  display:grid!important;
+  gap:0!important;
+  text-align:left!important;
+  line-height:1.05!important;
+}
+.auto-breaks-copy strong{
+  font:600 11.5px/1.2 var(--font-ui,Poppins,Arial,sans-serif)!important;
+  color:#194f73!important;
+}
+.auto-breaks-copy small{
+  margin-top:2px!important;
+  font:500 8.5px/1.1 var(--font-ui,Poppins,Arial,sans-serif)!important;
+  color:#6d8da4!important;
+}
+@media(max-width:760px){
+  .auto-breaks-copy small{display:none!important}
+  .auto-breaks-standalone{padding-right:8px!important}
+}
+@media(max-width:520px){
+  .auto-breaks-copy strong{display:none!important}
+  .auto-breaks-standalone{width:40px!important;padding:4px!important;justify-content:center!important}
+  .auto-breaks-icon{width:30px!important;height:30px!important}
+}
