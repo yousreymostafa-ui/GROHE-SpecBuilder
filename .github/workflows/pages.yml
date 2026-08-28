@@ -43,7 +43,8 @@ jobs:
           patch -d dist -p0 < .deploy/v18_5/index.html.patch
           patch -d dist -p0 < .deploy/v18_5/app.js.patch
           patch -d dist -p0 < .deploy/v18_5/pdfkit-exact-handoff.patch
-          patch -d dist -p0 < .deploy/v18_13/finish-filter-fix.patch
+          patch -d dist -p0 < .deploy/v18_13/finish-infer.patch
+          patch -d dist -p0 < .deploy/v18_13/sku-filter.patch
           python3 .deploy/v18_10/export-all-selections.py dist/app.js
           python3 .deploy/v18_11/auto-breaks.py dist/app.js dist/index.html
           python3 .deploy/v18_12/multisheet-export.py dist/app.js
@@ -145,7 +146,7 @@ jobs:
           grep -q 'PDF Merge' dist/export-launcher.js
           grep -q 'buildMultiSheetXlsx' dist/app.js
           grep -q 'exportSheetDefinitions' dist/app.js
-          grep -q 'skuEncodedFinish' dist/app.js
+          grep -q 'Strong GROHE article finish suffixes' dist/app.js
           grep -q "SKU searches narrow the current filtered catalogue" dist/app.js
           grep -q 'backend-modal' dist/design-system.css
           grep -q 'settings-workspace-dialog' dist/design-system.css
