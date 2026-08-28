@@ -34,6 +34,7 @@ jobs:
           cp card-pdf-actions.css dist/
           cp missing-image-google.css dist/
           cp data-sheet-viewer.css dist/
+          cp ui-refactor.css dist/
           cp core.js dist/
           cp storage.js dist/
           cp seed-products.js dist/
@@ -45,7 +46,6 @@ jobs:
           patch -d dist -p0 < .deploy/v18_5/pdfkit-exact-handoff.patch
           python3 .deploy/v18_13/fix-finish-filter.py dist/app.js
           python3 .deploy/v18_10/export-all-selections.py dist/app.js
-          python3 .deploy/v18_11/auto-breaks.py dist/app.js dist/index.html
           python3 .deploy/v18_12/multisheet-export.py dist/app.js
           cat .deploy/v18_5/styles.add.css >> dist/styles.css
 
@@ -68,13 +68,12 @@ jobs:
           cp .deploy/v18_9/responsive-ui.js dist/responsive-ui.js
           python3 -c "from pathlib import Path; p=Path('dist/index.html'); s=p.read_text(); s=s.replace('</head>','  <link rel=\"stylesheet\" href=\"design-system.css\" />\\n</head>',1).replace('</body>','  <script src=\"responsive-ui.js\"></script>\\n</body>',1); p.write_text(s)"
 
-          # v18.11 automatic grouping of selected items into specification breaks.
-          cp .deploy/v18_11/auto-breaks.css dist/auto-breaks.css
-          python3 -c "from pathlib import Path; p=Path('dist/index.html'); t=p.read_text(); t=t.replace('</head>','  <link rel=\"stylesheet\" href=\"auto-breaks.css\" />\\n</head>',1); p.write_text(t)"
-
           # v18.12 hardened export launcher: Excel / PDF Merge / Excel + PDF.
           cp .deploy/v18_12/export-launcher.js dist/export-launcher.js
           python3 -c "from pathlib import Path; p=Path('dist/index.html'); t=p.read_text(); t=t.replace('</body>','  <script src=\"export-launcher.js\"></script>\\n</body>',1); p.write_text(t)"
+
+          # Final UI refactor stylesheet must load after every legacy/injected CSS layer.
+          python3 -c "from pathlib import Path; p=Path('dist/index.html'); t=p.read_text(); t=t.replace('<link rel=\"stylesheet\" href=\"ui-refactor.css\" />',''); t=t.replace('</head>','  <link rel=\"stylesheet\" href=\"ui-refactor.css\" />\\n</head>',1); p.write_text(t)"
 
           # Browser-capable Data Sheet locator based on PDF Kit Pro 12.11.1 matching.
           cp .deploy/v18_5/data-sheet-viewer.js dist/data-sheet-viewer.js
@@ -118,7 +117,7 @@ jobs:
           test -s dist/pruned-sync.js
           test -s dist/design-system.css
           test -s dist/responsive-ui.js
-          test -s dist/auto-breaks.css
+          test -s dist/ui-refactor.css
           test -s dist/export-launcher.js
           test -s dist/multi-user/index.html
           test -s dist/multi-user/loader.js
@@ -135,6 +134,10 @@ jobs:
           grep -q 'responsive-ui.js' dist/index.html
           grep -q 'mobile-workspace-nav' dist/responsive-ui.js
           grep -q 'btnAutoBreaks' dist/index.html
+          grep -q 'ui-refactor.css' dist/index.html
+          grep -q 'function autoCreateBreaks' dist/app.js
+          grep -q 'no floating/mouse-follow preview' dist/app.js
+          grep -q 'grid-template-rows:auto auto' dist/ui-refactor.css
           grep -q 'auto-breaks-standalone' dist/index.html
           grep -q 'Organize selection' dist/index.html
           grep -q 'autoCreateBreaks' dist/app.js
@@ -142,7 +145,6 @@ jobs:
           grep -q "title:'Basin Mixer'" dist/app.js
           grep -q "title:'Shower Set'" dist/app.js
           grep -q "title:'Accessories'" dist/app.js
-          grep -q 'auto-breaks.css' dist/index.html
           grep -q 'export-launcher.js' dist/index.html
           grep -q 'PDF Merge' dist/export-launcher.js
           grep -q 'buildMultiSheetXlsx' dist/app.js
@@ -165,10 +167,10 @@ jobs:
           grep -q "\['Selection','Section','SKU','Picture'" dist/app.js
           grep -q "localStorage.setItem('pk7'" dist/app.js
           grep -q 'showDirectoryPicker' dist/data-sheet-viewer.js
-          grep -q '20260829-1' dist/multi-user/loader.js
+          grep -q '20260829-2' dist/multi-user/loader.js
           grep -q "searchParams.get('v')" dist/multi-user/boot.js
           grep -q "s.src='app.js'" dist/multi-user/boot.js
-          grep -q 'favicon.svg?v=20260829-1' dist/multi-user/index.html
+          grep -q 'favicon.svg?v=20260829-2' dist/multi-user/index.html
 
           if [ -f dist/pdf-kit-pro/pdf_kit_pro.html ]; then
             test -s dist/pdf-kit-pro/package.json
