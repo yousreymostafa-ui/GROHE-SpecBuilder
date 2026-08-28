@@ -43,8 +43,7 @@ jobs:
           patch -d dist -p0 < .deploy/v18_5/index.html.patch
           patch -d dist -p0 < .deploy/v18_5/app.js.patch
           patch -d dist -p0 < .deploy/v18_5/pdfkit-exact-handoff.patch
-          patch -d dist -p0 < .deploy/v18_13/finish-infer.patch
-          patch -d dist -p0 < .deploy/v18_13/sku-filter.patch
+          python3 .deploy/v18_13/fix-finish-filter.py dist/app.js
           python3 .deploy/v18_10/export-all-selections.py dist/app.js
           python3 .deploy/v18_11/auto-breaks.py dist/app.js dist/index.html
           python3 .deploy/v18_12/multisheet-export.py dist/app.js
