@@ -1,7 +1,7 @@
 (async()=>{
 'use strict';
 try{
- const RELEASE='20260829-2';
+ const RELEASE='20260829-3';
  const response=await fetch('../index.html',{cache:'no-store'});if(!response.ok)throw new Error('Could not load the main SpecBuilder application.');let html=await response.text();
  html=html.replace('<head>','<head><base href="../"><link rel="stylesheet" href="multi-user/auth.css?v='+RELEASE+'">');
  const accountButton='<button type="button" id="btnProfileHeader" class="multi-user-account-btn">Sign in</button>';
