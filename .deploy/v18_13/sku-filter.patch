@@ -1,0 +1,20 @@
+--- app.js
++++ app.js
+@@ -1578,9 +1578,9 @@
+-  if(!skuPrefixMode){
+-    for(const [key,raw] of Object.entries(state.filters)){
+-      const vals=Array.isArray(raw)?raw.filter(Boolean):(raw?[raw]:[]);
+-      if(key!==ignoreKey&&vals.length) list=list.filter(p=>vals.includes(String(p[key]||'')));
+-    }
+-  }
++  // SKU searches narrow the current filtered catalogue; they must not silently
++  // bypass Finish, Category or any other active facet.
++  for(const [key,raw] of Object.entries(state.filters)){
++    const vals=Array.isArray(raw)?raw.filter(Boolean):(raw?[raw]:[]);
++    if(key!==ignoreKey&&vals.length) list=list.filter(p=>vals.includes(String(p[key]||'')));
++  }
+   if(state.showMissingImagesOnly && state.imageFolderConnected) list=list.filter(p=>!getImageFile(p.sku));
+-  if(!skuPrefixMode&&state.viewFilter==='favorites') list=list.filter(p=>state.favorites.has(p.sku));
+-  else if(!skuPrefixMode&&state.viewFilter==='recent'){
++  if(state.viewFilter==='favorites') list=list.filter(p=>state.favorites.has(p.sku));
++  else if(state.viewFilter==='recent'){
