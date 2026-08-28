@@ -44,6 +44,7 @@ jobs:
           patch -d dist -p0 < .deploy/v18_5/app.js.patch
           patch -d dist -p0 < .deploy/v18_5/pdfkit-exact-handoff.patch
           python3 .deploy/v18_10/export-all-selections.py dist/app.js
+          python3 .deploy/v18_11/auto-breaks.py dist/app.js dist/index.html
           cat .deploy/v18_5/styles.add.css >> dist/styles.css
 
           # v18.6 settings workspace + manual product status controls.
@@ -64,6 +65,10 @@ jobs:
           cp .deploy/v18_9/design-system.css dist/design-system.css
           cp .deploy/v18_9/responsive-ui.js dist/responsive-ui.js
           python3 -c "from pathlib import Path; p=Path('dist/index.html'); s=p.read_text(); s=s.replace('</head>','  <link rel=\"stylesheet\" href=\"design-system.css\" />\\n</head>',1).replace('</body>','  <script src=\"responsive-ui.js\"></script>\\n</body>',1); p.write_text(s)"
+
+          # v18.11 automatic grouping of selected items into specification breaks.
+          cp .deploy/v18_11/auto-breaks.css dist/auto-breaks.css
+          python3 -c "from pathlib import Path; p=Path('dist/index.html'); t=p.read_text(); t=t.replace('</head>','  <link rel=\"stylesheet\" href=\"auto-breaks.css\" />\\n</head>',1); p.write_text(t)"
 
           # Browser-capable Data Sheet locator based on PDF Kit Pro 12.11.1 matching.
           cp .deploy/v18_5/data-sheet-viewer.js dist/data-sheet-viewer.js
@@ -107,6 +112,7 @@ jobs:
           test -s dist/pruned-sync.js
           test -s dist/design-system.css
           test -s dist/responsive-ui.js
+          test -s dist/auto-breaks.css
           test -s dist/multi-user/index.html
           test -s dist/multi-user/loader.js
           test -s dist/multi-user/auth.js
@@ -121,6 +127,13 @@ jobs:
           grep -q 'design-system.css' dist/index.html
           grep -q 'responsive-ui.js' dist/index.html
           grep -q 'mobile-workspace-nav' dist/responsive-ui.js
+          grep -q 'btnAutoBreaks' dist/index.html
+          grep -q 'autoCreateBreaks' dist/app.js
+          grep -q "title:'WC'" dist/app.js
+          grep -q "title:'Basin Mixer'" dist/app.js
+          grep -q "title:'Shower Set'" dist/app.js
+          grep -q "title:'Accessories'" dist/app.js
+          grep -q 'auto-breaks.css' dist/index.html
           grep -q 'backend-modal' dist/design-system.css
           grep -q 'settings-workspace-dialog' dist/design-system.css
           grep -q '@media(max-width:900px)' dist/design-system.css
@@ -137,8 +150,8 @@ jobs:
           grep -q "\['Selection','Section','SKU','Picture'" dist/app.js
           grep -q "localStorage.setItem('pk7'" dist/app.js
           grep -q 'showDirectoryPicker' dist/data-sheet-viewer.js
-          grep -q '20260828-1' dist/multi-user/loader.js
-          grep -q 'favicon.svg?v=20260828-1' dist/multi-user/index.html
+          grep -q '20260828-2' dist/multi-user/loader.js
+          grep -q 'favicon.svg?v=20260828-2' dist/multi-user/index.html
 
           if [ -f dist/pdf-kit-pro/pdf_kit_pro.html ]; then
             test -s dist/pdf-kit-pro/package.json
