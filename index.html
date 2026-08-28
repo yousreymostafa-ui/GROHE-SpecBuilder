@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="card-pdf-actions.css" />
   <link rel="stylesheet" href="missing-image-google.css" />
   <link rel="stylesheet" href="data-sheet-viewer.css" />
+  <link rel="stylesheet" href="ui-refactor.css" />
 </head>
 <body>
 
@@ -109,12 +110,10 @@
           </div>
           <div class="sequence-actions">
             <button type="button" class="auto-breaks-standalone" id="btnAutoBreaks" title="Automatically organize selected items into WC, Basin Mixer, Shower Set and Accessories">
-              <span class="auto-breaks-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M12 3l1.15 3.15L16.3 7.3l-3.15 1.15L12 11.6l-1.15-3.15L7.7 7.3l3.15-1.15L12 3Z"/><path d="M5.5 12.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/><path d="M17.5 12.5l.9 2.5 2.5.9-2.5.9-.9 2.5-.9-2.5-2.5-.9 2.5-.9.9-2.5Z"/></svg>
-              </span>
-              <span class="auto-breaks-copy"><strong>Auto Breaks</strong><small>Organize selection</small></span>
+              <span class="auto-breaks-icon" aria-hidden="true">✦</span>
+              <span>Auto Breaks</span>
             </button>
-<details class="action-menu sequence-view-menu" id="sequenceViewMenu">
+            <details class="action-menu sequence-view-menu" id="sequenceViewMenu">
               <summary class="btn small" title="Customize selected items view">View</summary>
               <div class="action-menu-popover right-align sequence-view-popover">
                 <div class="menu-section-title">Selected items display</div>
@@ -453,7 +452,6 @@
   </dialog>
 
   <div id="toast" class="toast" role="status"></div>
-  <div id="imageHoverPreview" class="image-hover-preview" aria-hidden="true"></div>
 
   <script src="core.js"></script>
   <script src="storage.js"></script>
