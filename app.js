@@ -289,6 +289,7 @@ function applyFontSize(value, persist=false){
   const slider=$('fontSize'), label=$('fontSizeValue');
   if(slider && Number(slider.value)!==n) slider.value=String(n);
   if(label) label.textContent=`${n}%`;
+  if(state.selectionView) applySelectionView(false);
   if(persist && state.db){ state.preferences.fontSize=n; savePreferences(); }
 }
 
@@ -346,9 +347,11 @@ function resetUiLayout(){
 }
 
 function applySelectionView(persist=false){
-  const defaults={showImages:true,showDescriptions:true,showBadges:true,showParentRef:true,showConcealed:true,compactRows:true,imageSize:92};
+  const defaults={showImages:true,showDescriptions:true,showBadges:true,showParentRef:true,showConcealed:true,compactRows:true,imageSize:92,textSize:100};
   state.selectionView={...defaults,...(state.selectionView||{})};
   const panel=document.querySelector('.sequence-panel');
+  const imageSize=Math.max(64,Math.min(160,Number(state.selectionView.imageSize)||92));
+  const textSize=Math.max(85,Math.min(150,Number(state.selectionView.textSize)||100));
   if(panel){
     panel.classList.toggle('seq-hide-images',!state.selectionView.showImages);
     panel.classList.toggle('seq-hide-descriptions',!state.selectionView.showDescriptions);
@@ -356,16 +359,31 @@ function applySelectionView(persist=false){
     panel.classList.toggle('seq-hide-parent-ref',!state.selectionView.showParentRef);
     panel.classList.toggle('seq-hide-concealed',!state.selectionView.showConcealed);
     panel.classList.toggle('seq-compact',!!state.selectionView.compactRows);
-    panel.style.setProperty('--selection-thumb-size',`${Math.max(64,Math.min(160,Number(state.selectionView.imageSize)||92))}px`);
+    panel.style.setProperty('--selection-thumb-size',`${imageSize}px`);
+    const ui=Math.max(.9,Math.min(1.4,Number(state.fontSize||115)/100));
+    const scale=ui*(textSize/100);
+    const sizes={
+      '--seq-sku-font':10.3,
+      '--seq-desc-font':9,
+      '--seq-parent-font':6.8,
+      '--seq-break-font':10,
+      '--seq-break-finish-font':7.5,
+      '--seq-body-label-font':6.5,
+      '--seq-body-select-font':7.7,
+      '--seq-required-font':7.2
+    };
+    Object.entries(sizes).forEach(([key,value])=>panel.style.setProperty(key,`${(value*scale).toFixed(2)}px`));
   }
   const map={viewShowImages:'showImages',viewShowDescriptions:'showDescriptions',viewShowBadges:'showBadges',viewShowParentRef:'showParentRef',viewShowConcealed:'showConcealed',viewCompactRows:'compactRows'};
   Object.entries(map).forEach(([id,key])=>{const el=$(id);if(el)el.checked=!!state.selectionView[key];});
-  const slider=$('selectionImageSize'),label=$('selectionImageSizeValue'),n=Math.max(64,Math.min(160,Number(state.selectionView.imageSize)||92));
-  if(slider)slider.value=String(n); if(label)label.textContent=`${n} px`;
+  const imageSlider=$('selectionImageSize'),imageLabel=$('selectionImageSizeValue');
+  if(imageSlider)imageSlider.value=String(imageSize); if(imageLabel)imageLabel.textContent=`${imageSize} px`;
+  const textSlider=$('selectionTextSize'),textLabel=$('selectionTextSizeValue');
+  if(textSlider)textSlider.value=String(textSize); if(textLabel)textLabel.textContent=`${textSize}%`;
   if(persist&&state.db){state.preferences.selectionView={...state.selectionView};savePreferences();}
 }
 function setSelectionViewOption(key,value){ state.selectionView[key]=value; applySelectionView(true); }
-function resetSelectionView(){ state.selectionView={showImages:true,showDescriptions:true,showBadges:true,showParentRef:true,showConcealed:true,compactRows:true,imageSize:92};applySelectionView(true); }
+function resetSelectionView(){ state.selectionView={showImages:true,showDescriptions:true,showBadges:true,showParentRef:true,showConcealed:true,compactRows:true,imageSize:92,textSize:100};applySelectionView(true); }
 
 function applyCatalogueView(persist=false){
   const defaults={showImages:true,showFamily:true,showDescriptions:true,showFinish:true,showBadges:true,compactCards:false,cardLayout:'top'};
@@ -2933,8 +2951,6 @@ function autoBreakProductBlocks(items=[]){
 
 async function autoCreateBreaks(){
   if(!state.project){openProjectDialog('new');return;}
-  await ensureRequiredComponents(false);
-
   const blocks=autoBreakProductBlocks(state.project.items||[]);
   if(!blocks.length){toast('Add products before creating automatic breaks');return;}
 
@@ -2942,9 +2958,7 @@ async function autoCreateBreaks(){
 
   const grouped=new Map(AUTO_BREAK_GROUPS.map(group=>[group.key,[]]));
   const unmatched=[];
-
   for(const block of blocks){
-    // Required/automatic components follow their visible parent product.
     const parent=block.find(item=>!item.auto)||block[0];
     const product=getProduct(parent?.sku);
     const group=autoBreakGroupForProduct(product);
@@ -2959,16 +2973,23 @@ async function autoCreateBreaks(){
   }
 
   state.project.items=rebuilt;
-  await touchProject();
+  syncActiveOption(state.project);
   renderProject();
+  updateHistoryButtons();
 
   const counts=AUTO_BREAK_GROUPS.map(group=>{
     const count=grouped.get(group).filter(item=>item.type==='product'&&!item.auto).length;
     return group.title+' '+count;
   }).join(' · ');
-  toast('Auto Breaks created · '+counts,3600);
-}
 
+  try{
+    await touchProject();
+    toast('Auto Breaks created · '+counts,3600);
+  }catch(err){
+    console.error('Auto Breaks save failed',err);
+    toast('Auto Breaks created, but project save needs retry',3600);
+  }
+}
 async function addSection(){
   if(!state.project){ openProjectDialog('new'); return; }
   const title=prompt('Break name:', 'MASTER BATHROOM'); if(title===null) return;
@@ -4173,7 +4194,9 @@ function setupEvents(){
   if($('btnResetLayout')) $('btnResetLayout').onclick=resetUiLayout;
   if($('btnClearFinish')) $('btnClearFinish').onclick=()=>{setFilterValues('finish',[]);state.resultLimit=90;renderFilters();};
   [['viewShowImages','showImages'],['viewShowDescriptions','showDescriptions'],['viewShowBadges','showBadges'],['viewShowParentRef','showParentRef'],['viewShowConcealed','showConcealed'],['viewCompactRows','compactRows']].forEach(([id,key])=>{$(id).onchange=e=>setSelectionViewOption(key,e.target.checked);});
-  $('selectionImageSize').oninput=e=>{state.selectionView.imageSize=Number(e.target.value);applySelectionView(false);}; $('selectionImageSize').onchange=e=>{state.selectionView.imageSize=Number(e.target.value);applySelectionView(true);}; $('btnResetSelectionView').onclick=resetSelectionView;
+  $('selectionImageSize').oninput=e=>{state.selectionView.imageSize=Number(e.target.value);applySelectionView(false);}; $('selectionImageSize').onchange=e=>{state.selectionView.imageSize=Number(e.target.value);applySelectionView(true);};
+  if($('selectionTextSize')){$('selectionTextSize').oninput=e=>{state.selectionView.textSize=Number(e.target.value);applySelectionView(false);};$('selectionTextSize').onchange=e=>{state.selectionView.textSize=Number(e.target.value);applySelectionView(true);};}
+  $('btnResetSelectionView').onclick=resetSelectionView;
   [['catalogueShowImages','showImages'],['catalogueShowFamily','showFamily'],['catalogueShowDescriptions','showDescriptions'],['catalogueShowFinish','showFinish'],['catalogueShowBadges','showBadges'],['catalogueCompactCards','compactCards']].forEach(([id,key])=>{const el=$(id);if(el)el.onchange=e=>setCatalogueViewOption(key,e.target.checked);});
   if($('btnResetCatalogueView'))$('btnResetCatalogueView').onclick=resetCatalogueView;
   $('btnCeramicsToggle').onclick=()=>setCeramicsIncluded(!state.includeCeramics,true);
