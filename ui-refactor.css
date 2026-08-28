@@ -16,6 +16,13 @@
   --rf-muted:#708796;
   --rf-blue:#2f70d0;
   --rf-radius:12px;
+  --type-xs:calc(10px * var(--ui-font-scale));
+  --type-sm:calc(11px * var(--ui-font-scale));
+  --type-md:calc(12px * var(--ui-font-scale));
+  --type-base:calc(13px * var(--ui-font-scale));
+  --type-lg:calc(15px * var(--ui-font-scale));
+  --type-xl:calc(20px * var(--ui-font-scale));
+  --type-2xl:calc(26px * var(--ui-font-scale));
 }
 
 html,body,button,input,select,textarea,summary{
@@ -38,10 +45,10 @@ html,body,button,input,select,textarea,summary{
 .app-brand{gap:9px!important;min-width:220px!important;padding-right:14px!important}
 .grohe-wordmark{width:42px!important;height:42px!important;flex-basis:42px!important}
 .grohe-wordmark svg{width:37px!important;height:32px!important}
-.brand-copy strong{font-size:13px!important;line-height:1.2!important}
+.brand-copy strong{font-size:calc(13px * var(--ui-font-scale))!important;line-height:1.2!important}
 .header-project{gap:1px!important}
-.project-name-line strong{font-size:12px!important}
-.project-meta{font-size:9px!important}
+.project-name-line strong{font-size:calc(12px * var(--ui-font-scale))!important}
+.project-meta{font-size:calc(9px * var(--ui-font-scale))!important}
 .header-actions{gap:5px!important}
 .header-actions .btn,.header-actions .icon-action,.header-actions .icon-menu-btn{
   height:34px!important;min-height:34px!important;
@@ -110,15 +117,15 @@ html,body,button,input,select,textarea,summary{
   display:flex!important;
   align-items:center!important;
 }
-.filter-sidebar-header strong{font-size:13px!important}
+.filter-sidebar-header strong{font-size:calc(13px * var(--ui-font-scale))!important}
 .filter-sidebar .facet-menu{margin-bottom:10px!important}
 .filter-sidebar .facet-static-head,
 .filter-sidebar .finish-static-head{min-height:24px!important;margin-bottom:5px!important}
 .filter-sidebar .facet-static-head strong,
-.filter-sidebar .finish-static-head strong{font-size:10px!important}
+.filter-sidebar .finish-static-head strong{font-size:calc(10px * var(--ui-font-scale))!important}
 .filter-sidebar .facet-search{height:31px!important;margin-bottom:5px!important}
-.filter-sidebar .facet-search input{font-size:10px!important}
-.filter-sidebar .facet-option{min-height:25px!important;padding:3px 5px!important;font-size:9.5px!important}
+.filter-sidebar .facet-search input{font-size:calc(10px * var(--ui-font-scale))!important}
+.filter-sidebar .facet-option{min-height:25px!important;padding:3px 5px!important;font-size:calc(9.5px * var(--ui-font-scale))!important}
 .finish-grid{gap:7px 6px!important}
 
 .catalogue-panel{
@@ -141,15 +148,15 @@ html,body,button,input,select,textarea,summary{
   margin:0 0 7px!important;
 }
 .catalogue-heading{min-width:0!important}
-.catalogue-title{font-size:14px!important;line-height:1.2!important}
+.catalogue-title{font-size:calc(14px * var(--ui-font-scale))!important;line-height:1.2!important}
 .catalogue-search-slot{min-width:0!important}
 .catalogue-search-compact{height:36px!important}
-.catalogue-search-compact input{font-size:10.5px!important}
+.catalogue-search-compact input{font-size:calc(10.5px * var(--ui-font-scale))!important}
 .catalogue-top-actions{display:flex!important;align-items:center!important;gap:6px!important;justify-content:flex-end!important}
-.catalogue-hint{font-size:8.5px!important;color:#8a9aa5!important}
+.catalogue-hint{font-size:calc(8.5px * var(--ui-font-scale))!important;color:#8a9aa5!important}
 .active-filter-row{flex:0 0 auto!important;min-height:0!important;margin:0 0 7px!important}
 .active-filter-chips{gap:5px!important}
-.filter-chip{min-height:24px!important;font-size:8.5px!important}
+.filter-chip{min-height:24px!important;font-size:calc(8.5px * var(--ui-font-scale))!important}
 
 .results-list{
   flex:1 1 auto!important;
@@ -175,10 +182,10 @@ html,body,button,input,select,textarea,summary{
   box-shadow:0 6px 18px rgba(25,56,76,.07)!important;
 }
 .fast-card .product-info{min-width:0!important}
-.product-sku{font-size:10.5px!important;line-height:1.2!important}
-.product-family{font-size:8.8px!important;line-height:1.25!important}
-.fast-card .product-desc{font-size:9px!important;line-height:1.38!important}
-.product-card-meta{font-size:8px!important}
+.product-sku{font-size:calc(10.5px * var(--ui-font-scale))!important;line-height:1.2!important}
+.product-family{font-size:calc(8.8px * var(--ui-font-scale))!important;line-height:1.25!important}
+.fast-card .product-desc{font-size:calc(9px * var(--ui-font-scale))!important;line-height:1.38!important}
+.product-card-meta{font-size:calc(8px * var(--ui-font-scale))!important}
 .card-actions-mini{gap:5px!important}
 
 /* ---------- thumbnail hover: anchored to thumbnail only ---------- */
@@ -277,7 +284,7 @@ html,body,button,input,select,textarea,summary{
   height:32px!important;
   min-height:32px!important;
 }
-.sequence-actions>.btn.small{padding:0 9px!important;font-size:9.5px!important}
+.sequence-actions>.btn.small{padding:0 9px!important;font-size:calc(9.5px * var(--ui-font-scale))!important}
 .selection-tools-icon{width:32px!important}
 
 /* Auto Breaks — compact AI-style utility, never a card/illustration */
@@ -299,7 +306,10 @@ html,body,button,input,select,textarea,summary{
   background:#f4f9fd!important;
   color:#245f87!important;
   box-shadow:none!important;
-  font:600 9.5px/1 Poppins,Inter,sans-serif!important;
+  font-family:Poppins,Inter,sans-serif!important;
+  font-weight:600!important;
+  font-size:calc(9.5px * var(--ui-font-scale))!important;
+  line-height:1!important;
   white-space:nowrap!important;
   overflow:hidden!important;
 }
@@ -319,7 +329,10 @@ html,body,button,input,select,textarea,summary{
   border-radius:6px!important;
   background:#fff!important;
   color:#2d76a8!important;
-  font:600 12px/1 Arial,sans-serif!important;
+  font-family:Arial,sans-serif!important;
+  font-weight:600!important;
+  font-size:calc(12px * var(--ui-font-scale))!important;
+  line-height:1!important;
   box-shadow:none!important;
 }
 .auto-breaks-copy{display:contents!important}
@@ -350,9 +363,9 @@ html,body,button,input,select,textarea,summary{
 }
 .sequence-row:hover{border-color:#bdced8!important}
 .seq-main{min-width:0!important}
-.seq-sku{font-size:10px!important;line-height:1.2!important}
-.seq-desc{font-size:9px!important;line-height:1.4!important}
-.seq-parent-ref{font-size:7.5px!important}
+.seq-sku{font-size:calc(10px * var(--ui-font-scale))!important;line-height:1.2!important}
+.seq-desc{font-size:calc(9px * var(--ui-font-scale))!important;line-height:1.4!important}
+.seq-parent-ref{font-size:calc(7.5px * var(--ui-font-scale))!important}
 
 /* Break rows and names */
 .section-row{
@@ -386,7 +399,7 @@ html,body,button,input,select,textarea,summary{
   overflow-wrap:anywhere!important;
   overflow:visible!important;
   text-overflow:clip!important;
-  font-size:10px!important;
+  font-size:calc(10px * var(--ui-font-scale))!important;
   line-height:1.25!important;
   font-weight:600!important;
   color:#294d65!important;
@@ -397,7 +410,7 @@ html,body,button,input,select,textarea,summary{
   max-width:32ch!important;
   height:28px!important;
   padding:0 7px!important;
-  font-size:10px!important;
+  font-size:calc(10px * var(--ui-font-scale))!important;
 }
 .room-finish-label{flex:0 0 auto!important}
 .room-health-button{flex:0 0 auto!important}
@@ -440,3 +453,27 @@ html,body,button,input,select,textarea,summary{
   .selector-main-top{grid-template-columns:minmax(0,1fr) auto!important}
   .catalogue-heading{display:none!important}
 }
+
+
+/* ---------- live sizing contract ---------- */
+/* These values are controlled by app.js. Keep this block last so the sliders
+   always change the rendered geometry immediately. */
+.fast-card .product-img{
+  height:var(--product-thumb-size)!important;
+}
+.sequence-panel .sequence-row{
+  grid-template-columns:12px var(--selection-thumb-size) minmax(0,1fr) 27px!important;
+}
+.sequence-panel .seq-img{
+  width:var(--selection-thumb-size)!important;
+  height:var(--selection-thumb-size)!important;
+  flex:0 0 var(--selection-thumb-size)!important;
+}
+.sequence-panel .seq-sku{font-size:var(--seq-sku-font,calc(10.3px * var(--ui-font-scale)))!important}
+.sequence-panel .seq-desc{font-size:var(--seq-desc-font,calc(9px * var(--ui-font-scale)))!important}
+.sequence-panel .seq-parent-ref{font-size:var(--seq-parent-font,calc(6.8px * var(--ui-font-scale)))!important}
+.sequence-panel .room-name-label{font-size:var(--seq-break-font,calc(10px * var(--ui-font-scale)))!important}
+.sequence-panel .room-finish-label{font-size:var(--seq-break-finish-font,calc(7.5px * var(--ui-font-scale)))!important}
+.sequence-panel .body-choice>span{font-size:var(--seq-body-label-font,calc(6.5px * var(--ui-font-scale)))!important}
+.sequence-panel .body-choice select{font-size:var(--seq-body-select-font,calc(7.7px * var(--ui-font-scale)))!important}
+.sequence-panel .required-body-missing span{font-size:var(--seq-required-font,calc(7.2px * var(--ui-font-scale)))!important}
