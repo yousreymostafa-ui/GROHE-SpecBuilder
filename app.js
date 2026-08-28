@@ -2772,7 +2772,7 @@ async function renameSection(id,title){
 }
 function startRoomInlineEdit(id,label){
   const item=state.project?.items.find(x=>x.id===id&&x.type==='section'); if(!item) return;
-  const input=document.createElement('input'); input.className='room-name-editor'; input.value=item.title||''; input.setAttribute('aria-label','Break name');
+  const input=document.createElement('input'); input.className='room-name-editor'; input.value=item.title||''; input.size=Math.max(5,Math.min(32,String(item.title||'').length+1)); input.setAttribute('aria-label','Break name'); input.addEventListener('input',()=>{input.size=Math.max(5,Math.min(32,input.value.length+1));});
   label.replaceWith(input); input.focus(); input.select(); let finished=false;
   const finish=async(save)=>{if(finished)return;finished=true;if(save){const value=input.value.trim();if(value&&value!==item.title){await renameSection(id,value);return;}}renderProject();};
   input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish(true);}else if(e.key==='Escape'){e.preventDefault();finish(false);}});
@@ -2854,6 +2854,121 @@ function openRoomMenuPortal(sectionId,anchor){
   const r=anchor.getBoundingClientRect(), margin=10; portal.style.visibility='hidden'; portal.style.left='0px'; portal.style.top='0px';
   requestAnimationFrame(()=>{const pr=portal.getBoundingClientRect();let left=Math.min(window.innerWidth-pr.width-margin,Math.max(margin,r.right-pr.width));let top=r.bottom+6;if(top+pr.height>window.innerHeight-margin)top=Math.max(margin,r.top-pr.height-6);portal.style.left=`${Math.round(left)}px`;portal.style.top=`${Math.round(top)}px`;portal.style.visibility='visible';});
 }
+
+const AUTO_BREAK_GROUPS=[
+  {key:'wc',title:'WC'},
+  {key:'basin',title:'Basin Mixer'},
+  {key:'shower',title:'Shower Set'},
+  {key:'accessories',title:'Accessories'}
+];
+
+function autoBreakGroupForProduct(product){
+  if(!product)return '';
+  const cat=normalizeText(product.category||'');
+  const raw=[product.description,product.fullText,product.family,product.category,product.area,product.function,product.mounting].filter(Boolean).join(' ');
+  const hay=normalizeText(raw);
+
+  // WC
+  if(
+    cat==='flushing system' ||
+    cat==='flush plate / actuation' ||
+    cat==='wc / ceramic' ||
+    cat==='shower toilet' ||
+    cat==='trigger spray' ||
+    /flush tank|flushtank|flushing cistern|cistern|inspection shaft|revision shaft/.test(hay)
+  ) return 'wc';
+
+  // Basin Mixer
+  const angleValve=cat==='angle valve'||/angle valve/.test(hay);
+  const halfThreeEighth=angleValve && (
+    /1\s*\/\s*2[\s\S]{0,18}3\s*\/\s*8/i.test(raw) ||
+    /1 2[\s\S]{0,18}3 8/.test(hay) ||
+    /dn\s*15[\s\S]{0,18}3\s*\/\s*8/i.test(raw)
+  );
+  if(cat==='basin mixer'||halfThreeEighth||/bottle trap/.test(hay)) return 'basin';
+
+  // Shower Set
+  const showerCategories=new Set([
+    'head shower','hand shower','shower system','shower set / rail',
+    'shower mixer','shower hose','shower accessory','body spray'
+  ]);
+  const showerRoughIn=cat==='concealed / rough-in' &&
+    /shower|smartbox|rapido|thermost|diverter|mixer|one way|two way|1 way|2 way/.test(hay) &&
+    !/basin/.test(hay);
+  if(
+    showerCategories.has(cat) ||
+    showerRoughIn ||
+    /rainshower|head shower|headshower|hand shower|handshower|shower hose|outlet elbow|wall union|hand shower holder|shower holder/.test(hay)
+  ) return 'shower';
+
+  // Accessories
+  if(cat==='accessory'||/\baccessor(?:y|ies)\b/.test(hay)) return 'accessories';
+
+  return '';
+}
+
+function autoBreakProductBlocks(items=[]){
+  const products=items.filter(item=>item?.type==='product');
+  const byId=new Map(products.map(item=>[item.id,item]));
+  const children=new Map();
+  for(const item of products){
+    if(item.auto&&item.parentItemId){
+      if(!children.has(item.parentItemId))children.set(item.parentItemId,[]);
+      children.get(item.parentItemId).push(item);
+    }
+  }
+  const seen=new Set(),blocks=[];
+  for(const item of products){
+    if(seen.has(item.id))continue;
+    if(item.auto&&item.parentItemId&&byId.has(item.parentItemId))continue;
+    const block=[item,...(children.get(item.id)||[])];
+    block.forEach(x=>seen.add(x.id));
+    blocks.push(block);
+  }
+  for(const item of products){
+    if(!seen.has(item.id)){seen.add(item.id);blocks.push([item]);}
+  }
+  return blocks;
+}
+
+async function autoCreateBreaks(){
+  if(!state.project){openProjectDialog('new');return;}
+  await ensureRequiredComponents(false);
+
+  const blocks=autoBreakProductBlocks(state.project.items||[]);
+  if(!blocks.length){toast('Add products before creating automatic breaks');return;}
+
+  pushProjectHistory('Auto Breaks');
+
+  const grouped=new Map(AUTO_BREAK_GROUPS.map(group=>[group.key,[]]));
+  const unmatched=[];
+
+  for(const block of blocks){
+    // Required/automatic components follow their visible parent product.
+    const parent=block.find(item=>!item.auto)||block[0];
+    const product=getProduct(parent?.sku);
+    const group=autoBreakGroupForProduct(product);
+    if(group&&grouped.has(group)) grouped.get(group).push(...block);
+    else unmatched.push(...block);
+  }
+
+  const rebuilt=[...unmatched];
+  for(const group of AUTO_BREAK_GROUPS){
+    rebuilt.push({id:uid(),type:'section',title:group.title,autoGenerated:true});
+    rebuilt.push(...grouped.get(group));
+  }
+
+  state.project.items=rebuilt;
+  await touchProject();
+  renderProject();
+
+  const counts=AUTO_BREAK_GROUPS.map(group=>{
+    const count=grouped.get(group).filter(item=>item.type==='product'&&!item.auto).length;
+    return group.title+' '+count;
+  }).join(' · ');
+  toast('Auto Breaks created · '+counts,3600);
+}
+
 async function addSection(){
   if(!state.project){ openProjectDialog('new'); return; }
   const title=prompt('Break name:', 'MASTER BATHROOM'); if(title===null) return;
@@ -4029,29 +4144,10 @@ function initCatalogSidebarResizer(){
 }
 
 function setupImageHoverPreview(){
-  const preview=$('imageHoverPreview'); if(!preview) return;
-  let active=null;
-  const hide=()=>{active=null;preview.classList.remove('show');preview.innerHTML='';};
-  const position=e=>{
-    if(!active||!preview.classList.contains('show')) return;
-    const r=preview.getBoundingClientRect(); let x=e.clientX+16,y=e.clientY+16;
-    if(x+r.width>window.innerWidth-10) x=e.clientX-r.width-16;
-    if(y+r.height>window.innerHeight-10) y=e.clientY-r.height-16;
-    preview.style.left=`${Math.max(8,x)}px`;preview.style.top=`${Math.max(8,y)}px`;
-  };
-  document.addEventListener('pointerover',e=>{
-    const wrap=e.target.closest?.('.product-img,.seq-img'); if(!wrap||wrap===active) return;
-    const img=wrap.querySelector('img'); if(!img) return;
-    active=wrap; const rect=wrap.getBoundingClientRect();
-    const side=Math.max(rect.width,rect.height)*1.5; preview.style.width=`${Math.round(side)}px`; preview.style.height=`${Math.round(side)}px`;
-    preview.innerHTML=`<img src="${esc(img.currentSrc||img.src)}" alt="" />`; preview.classList.add('show'); position(e);
-  });
-  document.addEventListener('pointermove',position);
-  document.addEventListener('pointerout',e=>{
-    if(!active) return; const wrap=e.target.closest?.('.product-img,.seq-img');
-    if(wrap===active && (!e.relatedTarget || !active.contains(e.relatedTarget))) hide();
-  });
-  window.addEventListener('blur',hide); document.addEventListener('scroll',hide,true);
+  // v18.15: no floating/mouse-follow preview. Thumbnail enlargement is handled
+  // purely by CSS and stays anchored to the product image itself.
+  const preview=$('imageHoverPreview');
+  if(preview){preview.classList.remove('show');preview.innerHTML='';preview.style.cssText='';}
 }
 
 const RUNTIME_VERSION='18.4.6';
@@ -4093,7 +4189,7 @@ function setupEvents(){
   if($('btnManageProjectNew')) $('btnManageProjectNew').onclick=()=>{closeDialogIfOpen('manageProjectDialog');openProjectDialog('new');};
   if($('btnManageProjectEdit')) $('btnManageProjectEdit').onclick=()=>{closeDialogIfOpen('manageProjectDialog');state.project?openProjectDialog('edit'):openProjectDialog('new');};
   if($('btnManageProjectSave')) $('btnManageProjectSave').onclick=async()=>{await saveCurrentProject();updateManageProjectSummary();await refreshProjectManagementViews();};
-  $('btnAddSection').onclick=addSection; $('btnAddSection2').onclick=addSection; $('btnClearSequence').onclick=clearSequence;
+  $('btnAddSection').onclick=addSection; $('btnAddSection2').onclick=addSection; if($('btnAutoBreaks')) $('btnAutoBreaks').onclick=autoCreateBreaks; $('btnClearSequence').onclick=clearSequence;
   if($('roomFinishSelect'))$('roomFinishSelect').onchange=updateRoomFinishPreview;
   if($('btnApplyRoomFinish'))$('btnApplyRoomFinish').onclick=applyRoomFinish;
   $('btnDatabase').onclick=async()=>{$('databaseDialog').showModal();state.dbLimit=120;setDbTab('products');await renderDatabaseManager();}; $('btnExport').onclick=openExportDialog; $('btnRunExport').onclick=runPresetExport;
