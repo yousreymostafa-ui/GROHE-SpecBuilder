@@ -163,8 +163,9 @@ jobs:
           grep -q "\['Selection','Section','SKU','Picture'" dist/app.js
           grep -q "localStorage.setItem('pk7'" dist/app.js
           grep -q 'showDirectoryPicker' dist/data-sheet-viewer.js
-          grep -q '20260828-3' dist/multi-user/loader.js
-          grep -q 'favicon.svg?v=20260828-3' dist/multi-user/index.html
+          grep -q '20260828-4' dist/multi-user/loader.js
+          grep -q 'app.js?v=20260828-4' dist/multi-user/boot.js
+          grep -q 'favicon.svg?v=20260828-4' dist/multi-user/index.html
 
           if [ -f dist/pdf-kit-pro/pdf_kit_pro.html ]; then
             test -s dist/pdf-kit-pro/package.json
