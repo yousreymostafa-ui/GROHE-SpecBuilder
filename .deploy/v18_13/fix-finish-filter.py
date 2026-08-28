@@ -27,7 +27,7 @@ new_finish = """function inferFinish(p){
   return 'No colour / technical';
 }"""
 
-s,n=re.subn(r"function inferFinish\\(p\\)\\{.*?\\n\\}\\n\\nfunction inferSize",new_finish+"\n\nfunction inferSize",s,count=1,flags=re.S)
+s,n=re.subn(r"function inferFinish\\(p\\)\\{.*?\\n\\}\\n\\nfunction inferSize",lambda m:new_finish+"\n\nfunction inferSize",s,count=1,flags=re.S)
 if n!=1:
     raise SystemExit("Could not replace inferFinish")
 
@@ -51,7 +51,7 @@ replacement="""  // SKU searches narrow the current filtered catalogue; they mus
   if(state.viewFilter==='favorites') list=list.filter(p=>state.favorites.has(p.sku));
   else if(state.viewFilter==='recent'){"""
 
-s,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
+s,n=re.subn(pattern,lambda m:replacement,s,count=1,flags=re.S)
 if n!=1:
     raise SystemExit("Could not replace SKU filter bypass")
 
