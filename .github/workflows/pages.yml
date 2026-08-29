@@ -103,6 +103,35 @@ jobs:
             printf '%s\n' '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PDF KIT PRO</title><script>location.replace("pdf_kit_pro.html"+location.search+location.hash)</script></head><body></body></html>' > dist/pdf-kit-pro/index.html
           fi
 
+          # DEV 19 isolated route.
+          # Snapshot the fully built current runtime into /dev-19/ without changing
+          # the production root or /multi-user/ route. DEV uses separate browser
+          # databases and local-only project storage.
+          rm -rf dist/dev-19
+          mkdir -p dist/dev-19/pdf-kit-pro
+          cp dev-19/index.html dist/dev-19/index.html
+          cp dev-19/loader.js dist/dev-19/loader.js
+          cp dev-19/dev-storage.js dist/dev-19/dev-storage.js
+          cp dist/index.html dist/dev-19/app.html
+          for f in favicon.svg styles.css card-pdf-actions.css missing-image-google.css data-sheet-viewer.css core.js seed-products.js data-sheet-viewer.js settings-ui.css settings-ui.js ui-fixes.css ui-fixes.js pruned-sync.js design-system.css responsive-ui.js export-launcher.js ui-refactor.css app.js; do
+            cp "dist/$f" "dist/dev-19/$f"
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          replacements={
+              'grohe-product-selector-v1':'grohe-product-selector-dev19-v1',
+              'GROHEPdfLibrary':'GROHEPdfLibraryDev19',
+              'grohe-selection-text-size-v1':'grohe-selection-text-size-dev19-v1',
+          }
+          for name in ['app.js','settings-ui.js','data-sheet-viewer.js','ui-fixes.js']:
+              p=Path('dist/dev-19')/name
+              text=p.read_text(encoding='utf-8')
+              for old,new in replacements.items():
+                  text=text.replace(old,new)
+              p.write_text(text,encoding='utf-8')
+          PY
+          printf '%s\n' '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PDF KIT PRO</title><script>location.replace("../../pdf-kit-pro/"+location.search+location.hash)</script></head><body></body></html>' > dist/dev-19/pdf-kit-pro/index.html
+
           touch dist/.nojekyll
 
           # Deployment contract checks.
@@ -129,6 +158,18 @@ jobs:
           test -s dist/multi-user/storage.js
           test -s dist/multi-user/supabase-config.js
           test -s dist/pdf-kit-pro/index.html
+          test -s dist/dev-19/index.html
+          test -s dist/dev-19/app.html
+          test -s dist/dev-19/app.js
+          test -s dist/dev-19/dev-storage.js
+          test -s dist/dev-19/pdf-kit-pro/index.html
+          grep -q 'GROHE SpecBuilder — DEV 19' dist/dev-19/index.html
+          grep -q 'grohe-product-selector-dev19-v1' dist/dev-19/app.js
+          grep -q 'grohe-product-selector-dev19-v1' dist/dev-19/settings-ui.js
+          grep -q 'GROHEPdfLibraryDev19' dist/dev-19/data-sheet-viewer.js
+          grep -q 'grohe-selection-text-size-dev19-v1' dist/dev-19/ui-fixes.js
+          grep -q 'devLocalOnly:true' dist/dev-19/dev-storage.js
+          grep -q '../../pdf-kit-pro/' dist/dev-19/pdf-kit-pro/index.html
           grep -q 'btnExportPdfOnly' dist/index.html
           grep -q 'settings-ui.js' dist/index.html
           grep -q 'ui-fixes.js' dist/index.html
