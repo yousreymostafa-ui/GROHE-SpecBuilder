@@ -116,20 +116,7 @@ jobs:
           for f in favicon.svg styles.css card-pdf-actions.css missing-image-google.css data-sheet-viewer.css core.js seed-products.js data-sheet-viewer.js settings-ui.css settings-ui.js ui-fixes.css ui-fixes.js pruned-sync.js design-system.css responsive-ui.js export-launcher.js ui-refactor.css app.js; do
             cp "dist/$f" "dist/dev-19/$f"
           done
-          python3 - <<'PY'
-          from pathlib import Path
-          replacements={
-              'grohe-product-selector-v1':'grohe-product-selector-dev19-v1',
-              'GROHEPdfLibrary':'GROHEPdfLibraryDev19',
-              'grohe-selection-text-size-v1':'grohe-selection-text-size-dev19-v1',
-          }
-          for name in ['app.js','settings-ui.js','data-sheet-viewer.js','ui-fixes.js']:
-              p=Path('dist/dev-19')/name
-              text=p.read_text(encoding='utf-8')
-              for old,new in replacements.items():
-                  text=text.replace(old,new)
-              p.write_text(text,encoding='utf-8')
-          PY
+          python3 .deploy/dev19/prepare-dev.py
           printf '%s\n' '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PDF KIT PRO</title><script>location.replace("../../pdf-kit-pro/"+location.search+location.hash)</script></head><body></body></html>' > dist/dev-19/pdf-kit-pro/index.html
 
           touch dist/.nojekyll
