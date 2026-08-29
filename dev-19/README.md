@@ -1,12 +1,11 @@
 # GROHE SpecBuilder DEV 19
 
-This route is intentionally isolated from the production `/multi-user/` application.
+Repository-native isolated development route.
 
-- Route: `/dev-19/`
-- Baseline: deployed SpecBuilder v20260829-3
-- Project/product/settings IndexedDB: DEV-specific database names
-- PDF folder memory: DEV-specific browser database
-- Cloud project writes: disabled in DEV baseline
-- Production files are not replaced by this route.
-
-Future DEV 19 changes should target the DEV route only until the user explicitly approves production release.
+- Production remains at /multi-user/
+- Development is /dev-19/
+- DEV uses separate IndexedDB/local storage namespaces
+- No production project database is shared
+- Shared product seed is read-only from ../seed-products.js
+- PDF Kit redirects safely to ../../pdf-kit-pro/
+- DEV files are committed directly so both GitHub Pages deployment paths can serve them.

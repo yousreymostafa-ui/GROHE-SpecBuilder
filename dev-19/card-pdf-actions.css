@@ -1,0 +1,132 @@
+/* v18.4.1 — catalogue card actions live INSIDE the card bottom edge.
+   Favorite · PDF data sheet · Add stay on one line. Missing-image recovery,
+   when present, occupies the left side of the same internal action row. */
+.selector-panel .product-card.fast-card{
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  padding:12px 12px 49px!important;
+  gap:7px!important;
+  position:relative!important;
+}
+.selector-panel.catalogue-layout-top .fast-card .product-img{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+.selector-panel.catalogue-layout-top .fast-card .product-info{
+  grid-column:1!important;
+  grid-row:2!important;
+}
+.selector-panel .card-actions-mini,
+.selector-panel.catalogue-layout-top .card-actions-mini{
+  position:absolute!important;
+  left:10px!important;
+  right:10px!important;
+  bottom:9px!important;
+  top:auto!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  width:auto!important;
+  height:30px!important;
+  min-height:30px!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:6px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  pointer-events:auto!important;
+  z-index:3!important;
+}
+.selector-panel .favorite-btn,
+.selector-panel .pdf-sheet-btn,
+.selector-panel .quick-add{
+  position:static!important;
+  top:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  transform:none!important;
+  width:28px!important;
+  height:28px!important;
+  min-width:28px!important;
+  min-height:28px!important;
+  padding:0!important;
+  border:1px solid #d9e4eb!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:#738999!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  pointer-events:auto!important;
+  box-shadow:none!important;
+}
+.selector-panel .favorite-btn{font-size:calc(14px * var(--ui-font-scale))!important}
+.selector-panel .favorite-btn:hover{background:#fffaf0!important;border-color:#ead6a1!important;color:#bf8c2c!important}
+.selector-panel .favorite-btn.active{background:#fff8e8!important;border-color:#e4c984!important;color:#c3902b!important}
+.selector-panel .pdf-sheet-btn{color:#4f718a!important}
+.selector-panel .pdf-sheet-btn:hover{background:#edf6fc!important;border-color:#b9d6e8!important;color:#1769aa!important}
+.selector-panel .pdf-sheet-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.selector-panel .quick-add{background:#eef7ff!important;border-color:#c8dfef!important;color:#397eaf!important;font-size:calc(18px * var(--ui-font-scale))!important;font-weight:400!important;line-height:1!important}
+.selector-panel .quick-add:hover{background:#dff0ff!important;border-color:#a8cce4!important;color:#1769aa!important}
+
+/* Side layout keeps image + copy side-by-side; the actions remain anchored inside
+   the lower edge of the same card rather than becoming a separate row. */
+.selector-panel.catalogue-layout-side .product-card.fast-card{
+  grid-template-columns:calc(var(--product-thumb-size) * var(--card-side-image-scale)) minmax(0,1fr)!important;
+  grid-template-rows:auto!important;
+  align-items:center!important;
+  gap:9px!important;
+  padding:10px 10px 47px!important;
+}
+.selector-panel.catalogue-layout-side .fast-card .product-img{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+.selector-panel.catalogue-layout-side .fast-card .product-info{
+  grid-column:2!important;
+  grid-row:1!important;
+}
+.selector-panel.catalogue-layout-side .card-actions-mini{
+  left:9px!important;
+  right:9px!important;
+  bottom:8px!important;
+}
+.selector-panel.catalogue-hide-images.catalogue-layout-side .product-card.fast-card{grid-template-columns:minmax(0,1fr)!important}
+.selector-panel.catalogue-hide-images.catalogue-layout-side .fast-card .product-info{grid-column:1!important}
+.selector-panel.catalogue-compact-cards .product-card.fast-card{padding:9px 9px 43px!important}
+html[data-product-columns="5"] .selector-panel .product-card.fast-card,
+html[data-product-columns="6"] .selector-panel .product-card.fast-card{padding-bottom:42px!important}
+html[data-product-columns="5"] .selector-panel .favorite-btn,
+html[data-product-columns="5"] .selector-panel .pdf-sheet-btn,
+html[data-product-columns="5"] .selector-panel .quick-add,
+html[data-product-columns="6"] .selector-panel .favorite-btn,
+html[data-product-columns="6"] .selector-panel .pdf-sheet-btn,
+html[data-product-columns="6"] .selector-panel .quick-add{width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important}
+
+/* Missing-image Google recovery action shares the same internal row. */
+.selector-panel .image-search-btn{
+  position:static!important;
+  margin-right:auto!important;
+  min-height:28px!important;
+  height:28px!important;
+  padding:0 9px!important;
+  border:1px solid #c9dceb!important;
+  border-radius:8px!important;
+  background:#f3f9fd!important;
+  color:#2d6f9e!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  font:600 calc(8px * var(--ui-font-scale))/1 inherit!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+}
+.selector-panel .image-search-btn:hover{background:#e6f3fb!important;border-color:#9bc7e0!important;color:#1769aa!important}
+.selector-panel .image-search-btn span{font-size:calc(13px * var(--ui-font-scale));line-height:1}
+.selector-panel .image-search-btn b{font-weight:600}
+html[data-product-columns="6"] .selector-panel .image-search-btn b{display:none}
+html[data-product-columns="6"] .selector-panel .image-search-btn{width:25px!important;min-width:25px!important;padding:0!important}
